@@ -19,7 +19,7 @@ def lambda_handler(event, context):
         # Adaptado a HTTP API v2: pathParameters está bajo 'pathParameters'
         path_params = event.get('pathParameters', {})
         id_receta = path_params.get('id')
-
+        print(id_receta)
         if not id_receta:
             return {
                 'statusCode': 400,

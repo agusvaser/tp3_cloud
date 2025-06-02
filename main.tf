@@ -3,10 +3,20 @@ provider "aws" {
   region = "us-east-1"
 }
 
+# Genera un sufijo aleatorio hexadecimal (4 caracteres)
+resource "random_id" "bucket_suffix" {
+  byte_length = 8
+}
+
+# Nombre generado del bucket S3
+locals {
+  generated_bucket_name = "bucket-recetify-${random_id.bucket_suffix.hex}"
+}
+
 # Módulo para el bucket S3 (ya creado previamente)
 module "frontend_bucket" {
   source      = "./modules/s3_bucket"
-  bucket_name = "bucket-recetify-tp3"
+  bucket_name = local.generated_bucket_name
   acl         = "public-read"
   files = {
     "index.html"    = "${path.module}/frontend/index.html"
