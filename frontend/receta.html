@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle de Receta - Recetas en Casa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #ff914d;
+      --primary-dark: #ff7a26;
+      --accent-color: #4cb050;
+      --text-color: #333;
+      --light-gray: #f5f5f5;
+      --white: #ffffff;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      padding: 1.2rem 5%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 25px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      padding: 8px 12px;
+      border-radius: 20px;
+    }
+
+    nav a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .contenido {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 5%;
+    }
+
+    .receta-container {
+      background-color: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    }
+
+    .receta-imagen {
+      width: 100%;
+      height: 300px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .receta-info {
+      padding: 2rem;
+    }
+
+    .receta-encabezado {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .receta-titulo-container {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .receta-titulo {
+      font-size: 2rem;
+      color: var(--primary-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .categoria-tag {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tiempo-container {
+      display: flex;
+      align-items: center;
+      margin-top: 0.5rem;
+    }
+
+    .tiempo {
+      display: flex;
+      align-items: center;
+      color: #777;
+      background-color: #f5f5f5;
+      padding: 8px 16px;
+      border-radius: 25px;
+      margin-right: 1rem;
+    }
+
+    .tiempo i {
+      margin-right: 5px;
+      color: var(--primary-color);
+    }
+
+    .autor {
+      color: #666;
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+
+    .receta-acciones {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-accion {
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-accion:hover {
+      background-color: #429644;
+    }
+
+    .btn-accion.guardar {
+      background-color: var(--primary-color);
+    }
+
+    .btn-accion.guardar:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .seccion-receta {
+      margin-top: 2rem;
+    }
+
+    .seccion-titulo {
+      color: var(--primary-dark);
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    .ingredientes-lista {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      list-style-type: none;
+    }
+
+    .ingrediente-item {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      background-color: #f8f8f8;
+      border-radius: 6px;
+    }
+
+    .ingrediente-item::before {
+      content: "•";
+      color: var(--primary-color);
+      font-weight: bold;
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+
+    .instrucciones-lista {
+      list-style-type: none;
+      counter-reset: instruccion;
+    }
+
+    .instruccion-item {
+      position: relative;
+      margin-bottom: 20px;
+      padding-left: 40px;
+    }
+
+    .instruccion-item::before {
+      counter-increment: instruccion;
+      content: counter(instruccion);
+      position: absolute;
+      left: 0;
+      top: 0;
+      background-color: var(--primary-color);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .btn-volver {
+      background-color: #777;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 2rem;
+      transition: background-color 0.3s;
+      text-decoration: none;
+    }
+
+    .btn-volver:hover {
+      background-color: #555;
+    }
+
+    .not-found {
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .not-found h2 {
+      color: var(--primary-dark);
+      margin-bottom: 1rem;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      .receta-encabezado {
+        flex-direction: column;
+      }
+      
+      .receta-acciones {
+        margin-top: 1rem;
+      }
+      
+      .ingredientes-lista {
+        grid-template-columns: 1fr;
+      }
+      
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      
+      .header-container {
+        flex-direction: column;
+      }
+      
+      nav a {
+        margin: 5px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <h1>Recetas en Casa</h1>
+      <nav>
+        <a href="home.html">Inicio</a>
+        <a href="#">Mis Recetas</a>
+        <a href="#">Favoritos</a>
+        <a href="index.html">Salir</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="contenido">
+    <!-- Este div se mostrará cuando se cargue la receta -->
+    <div id="receta-detalle" style="display: none;">
+      <div class="receta-container">
+        <div class="receta-imagen" id="receta-imagen"></div>
+        <div class="receta-info">
+          <div class="receta-encabezado">
+            <div class="receta-titulo-container">
+              <h1 class="receta-titulo" id="receta-nombre"></h1>
+              <div>
+                <span class="categoria-tag" id="receta-categoria"></span>
+              </div>
+              <div class="tiempo-container">
+                <span class="tiempo"><i class="far fa-clock"></i> <span id="receta-tiempo"></span> minutos</span>
+              </div>
+              <div class="autor" id="receta-autor"></div>
+            </div>
+            <div class="receta-acciones">
+              <button class="btn-accion guardar" id="btn-guardar">
+                <i class="far fa-bookmark"></i> Guardar
+              </button>
+              <button class="btn-accion" id="btn-compartir">
+                <i class="fas fa-share-alt"></i> Compartir
+              </button>
+            </div>
+          </div>
+          
+          <div class="seccion-receta">
+            <h2 class="seccion-titulo">Ingredientes</h2>
+            <ul class="ingredientes-lista" id="ingredientes-lista">
+              <!-- Los ingredientes se cargarán aquí dinámicamente -->
+            </ul>
+          </div>
+          
+          <div class="seccion-receta">
+            <h2 class="seccion-titulo">Preparación</h2>
+            <ol class="instrucciones-lista" id="instrucciones-lista">
+              <!-- Las instrucciones se cargarán aquí dinámicamente -->
+            </ol>
+          </div>
+        </div>
+      </div>
+      
+      <a href="home.html" class="btn-volver">
+        <i class="fas fa-arrow-left"></i> Volver a Recetas
+      </a>
+    </div>
+    
+    <!-- Este div se mostrará cuando no se encuentre la receta -->
+    <div id="receta-no-encontrada" style="display: none;" class="not-found">
+      <h2>Receta no encontrada</h2>
+      <p>Lo sentimos, no pudimos encontrar la receta que estás buscando.</p>
+      <a href="home.html" class="btn-volver" style="margin-top: 1rem;">
+        <i class="fas fa-arrow-left"></i> Volver a Recetas
+      </a>
+    </div>
+    
+    <!-- Mensaje de carga -->
+    <div id="cargando" class="not-found">
+      <h2>Cargando receta...</h2>
+      <p>Por favor, espera un momento.</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Recetas en Casa - Todos los derechos reservados</p>
+  </footer>
+  <script src="config.js"></script>
+  <script>
+    const apiBaseUrl = apiConfig.apiBaseUrl;    
+    // Verificar si hay usuario logueado
+    document.addEventListener('DOMContentLoaded', function() {
+      // Comentado para facilitar pruebas - descomenta en producción
+      /*const usuario = localStorage.getItem('usuario');
+      if (!usuario) {
+        // Si no hay usuario, redirigir al login
+        window.location.href = 'index.html';
+        return;
+      }*/
+      
+      // Obtener el ID de la receta de la URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const recetaId = urlParams.get('id');
+      
+      if (!recetaId) {
+        // Si no hay ID, mostrar mensaje de error
+        document.getElementById('cargando').style.display = 'none';
+        document.getElementById('receta-no-encontrada').style.display = 'block';
+        return;
+      }
+      
+      // Cargar los detalles de la receta
+      cargarReceta(recetaId);
+    });
+    
+    async function cargarReceta(id) {
+      try {
+        const response = await fetch(`${apiBaseUrl}/recetas/${id}`);
+
+        
+        if (!response.ok) {
+          throw new Error('Receta no encontrada');
+        }
+        
+        const receta = await response.json();
+        
+        // Ocultar mensaje de carga
+        document.getElementById('cargando').style.display = 'none';
+        
+        // Mostrar detalles de la receta
+        document.getElementById('receta-detalle').style.display = 'block';
+        
+        // Actualizar datos de la receta en la interfaz
+        document.getElementById('receta-nombre').textContent = receta.nombre;
+        document.getElementById('receta-categoria').textContent = receta.categoria;
+        document.getElementById('receta-tiempo').textContent = receta.tiempo;
+        
+        // Asignar imagen según categoría (podrías mejorarlo para usar imágenes específicas)
+        const imgClasses = {
+          'desayuno': 'url("https://images.unsplash.com/photo-1533089860892-a9b969df67af?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")',
+          'almuerzo': 'url("https://images.unsplash.com/photo-1547592180-85f173990554?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")',
+          'cena': 'url("https://images.unsplash.com/photo-1559847844-5315695dadae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")',
+          'postre': 'url("https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")',
+          'default': 'url("https://images.unsplash.com/photo-1506368249639-73a05d6f6488?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")'
+        };
+        
+        const imgUrl = imgClasses[receta.categoria.toLowerCase()] || imgClasses.default;
+        document.getElementById('receta-imagen').style.backgroundImage = imgUrl;
+        
+        // Mostrar autor
+        const usuarioJSON = localStorage.getItem('usuario');
+        const usuario = JSON.parse(usuarioJSON || '{"nombre": ""}');
+        
+        if (receta.usuario_email) {
+          document.getElementById('receta-autor').textContent = `Creado por: ${receta.usuario_nombre || 'Usuario'}`;
+        } else {
+          document.getElementById('receta-autor').textContent = 'Receta de la comunidad';
+        }
+        
+        // Cargar ingredientes
+        const ingredientesLista = document.getElementById('ingredientes-lista');
+        ingredientesLista.innerHTML = '';
+        
+        if (Array.isArray(receta.ingredientes)) {
+          receta.ingredientes.forEach(ingrediente => {
+            const li = document.createElement('li');
+            li.className = 'ingrediente-item';
+            li.textContent = ingrediente;
+            ingredientesLista.appendChild(li);
+          });
+        } else {
+          // Si los ingredientes llegan como string, intentamos dividirlos
+          const ingredientesArray = receta.ingredientes.split(',');
+          ingredientesArray.forEach(ingrediente => {
+            const li = document.createElement('li');
+            li.className = 'ingrediente-item';
+            li.textContent = ingrediente.trim();
+            ingredientesLista.appendChild(li);
+          });
+        }
+        
+        // Cargar instrucciones
+        const instruccionesLista = document.getElementById('instrucciones-lista');
+        instruccionesLista.innerHTML = '';
+        
+        // Dividir las instrucciones en pasos
+        let instrucciones;
+        if (receta.pasos) {
+          instrucciones = receta.pasos;
+        } else if (receta.instrucciones) {
+          instrucciones = receta.instrucciones;
+        } else {
+          instrucciones = "No hay instrucciones disponibles.";
+        }
+        
+        // Intentamos dividir por números o puntos si viene como texto
+        if (typeof instrucciones === 'string') {
+          // Dividir por números o puntos seguidos de espacio
+          const instruccionesDivididas = instrucciones.split(/\d+\.\s|\n/);
+          
+          instruccionesDivididas.forEach(instruccion => {
+            if (instruccion.trim()) {
+              const li = document.createElement('li');
+              li.className = 'instruccion-item';
+              li.textContent = instruccion.trim();
+              instruccionesLista.appendChild(li);
+            }
+          });
+        } else if (Array.isArray(instrucciones)) {
+          instrucciones.forEach(instruccion => {
+            const li = document.createElement('li');
+            li.className = 'instruccion-item';
+            li.textContent = instruccion;
+            instruccionesLista.appendChild(li);
+          });
+        }
+        
+        // Configurar botones de acciones
+        document.getElementById('btn-guardar').addEventListener('click', function() {
+          // Aquí implementarías la lógica para guardar en favoritos
+          alert('Receta guardada en favoritos');
+          this.innerHTML = '<i class="fas fa-bookmark"></i> Guardada';
+          this.disabled = true;
+        });
+        
+        document.getElementById('btn-compartir').addEventListener('click', function() {
+          // Copiar al portapapeles
+          const url = window.location.href;
+          navigator.clipboard.writeText(url)
+            .then(() => {
+              alert('Enlace copiado al portapapeles');
+            })
+            .catch(err => {
+              console.error('Error al copiar: ', err);
+              alert('No se pudo copiar el enlace');
+            });
+        });
+        
+      } catch (error) {
+        console.error('Error al cargar la receta:', error);
+        document.getElementById('cargando').style.display = 'none';
+        document.getElementById('receta-no-encontrada').style.display = 'block';
+      }
+    }
+  </script>
+
+</body>
+</html>

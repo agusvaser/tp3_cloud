@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recetas en Casa - Inicio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #ff914d;
+      --primary-dark: #ff7a26;
+      --accent-color: #4cb050;
+      --text-color: #333;
+      --light-gray: #f5f5f5;
+      --white: #ffffff;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      padding: 1.2rem 5%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 25px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      padding: 8px 12px;
+      border-radius: 20px;
+    }
+
+    nav a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .contenido {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 5%;
+    }
+
+    .banner {
+      background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      text-align: center;
+      padding: 4rem 2rem;
+      margin-bottom: 2rem;
+      border-radius: 12px;
+    }
+
+    .banner h2 {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .banner p {
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .search-section {
+      background-color: var(--white);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    .search-title {
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+      padding-bottom: 8px;
+    }
+
+    .search-title::after {
+      content: '';
+      position: absolute;
+      width: 60%;
+      height: 3px;
+      background-color: var(--primary-color);
+      bottom: 0;
+      left: 0;
+    }
+
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .search-type {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .search-type label {
+      margin-right: 15px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 5px;
+    }
+
+    .search-type input {
+      margin-right: 5px;
+    }
+
+    .btn-search {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s;
+      align-self: flex-end;
+    }
+
+    .btn-search:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-add {
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.3s;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-add i {
+      margin-right: 8px;
+    }
+
+    .btn-add:hover {
+      background-color: #429644;
+    }
+
+    .destacadas {
+      margin-top: 2rem;
+    }
+
+    .destacadas h2 {
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+      padding-bottom: 8px;
+    }
+
+    .destacadas h2::after {
+      content: '';
+      position: absolute;
+      width: 60%;
+      height: 3px;
+      background-color: var(--primary-color);
+      bottom: 0;
+      left: 0;
+    }
+
+    .recetas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .receta {
+      background-color: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .receta:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+    }
+
+    .receta-img {
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .pizza { background-image: url('https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'); }
+    .galletas { background-image: url('https://images.unsplash.com/photo-1558961363-fa8fdf82db35?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'); }
+    .quinoa { background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'); }
+
+    .receta-info {
+      padding: 1.5rem;
+    }
+
+    .receta h3 {
+      margin-bottom: 10px;
+      color: var(--primary-dark);
+    }
+
+    .receta p {
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .receta-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .tiempo {
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    .btn {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #429644;
+    }
+
+    /* Modal para agregar receta */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: var(--white);
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      max-width: 700px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-group input, 
+    .form-group textarea, 
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+    }
+
+    .form-group textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .ingredient-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .ingredient-row input {
+      flex: 1;
+    }
+
+    .ingredient-row button {
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+    }
+
+    .remove-ingredient {
+      background-color: #e74c3c;
+    }
+
+    .add-search-ingredient {
+      background-color: var(--accent-color);
+    }
+
+    .add-ingredient {
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .submit-recipe {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      width: 100%;
+    }
+
+    .search-results {
+      margin-top: 2rem;
+      display: none;
+    }
+
+    /* Estilos para las etiquetas de ingredientes */
+    .search-ingredients-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+
+    .ingredient-tag {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 50px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .remove-tag {
+      margin-left: 8px;
+      background: none;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      .recetas-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      
+      .header-container {
+        flex-direction: column;
+      }
+      
+      nav a {
+        margin: 5px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <h1>Recetas en Casa</h1>
+      <nav>
+        <a href="#">Mis Datos</a>
+        <a href="#">Mis Recetas</a>
+        <a href="#">Favoritos</a>
+        <a href="index.html">Salir</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="contenido">
+    <div class="banner">
+      <h2>Descubre el chef que llevas dentro</h2>
+      <p>Explora cientos de recetas caseras fáciles de preparar y comparte tus creaciones con la comunidad</p>
+    </div>
+
+    <!-- Sección de búsqueda -->
+    <div class="search-section">
+      <h2 class="search-title">Buscar Recetas</h2>
+      <div class="search-container">
+        <div class="search-box">
+          <div class="search-type">
+            <label>
+              <input type="radio" name="search-type" value="nombre" checked> Buscar por nombre
+            </label>
+            <label>
+              <input type="radio" name="search-type" value="categoria"> Buscar por categoría
+            </label>
+            <label>
+              <input type="radio" name="search-type" value="ingredientes"> Buscar por ingredientes
+            </label>
+          </div>
+          
+          <!-- Campo para búsqueda por nombre -->
+          <div id="search-nombre-container">
+            <input type="text" id="search-input" class="search-input" placeholder="Escribe el nombre de la receta...">
+          </div>
+          
+          <!-- Campo para búsqueda por categoría (inicialmente oculto) -->
+          <div id="search-categoria-container" style="display: none; margin-top: 10px;">
+            <select id="categoria-select" class="search-input">
+              <option value="">Selecciona una categoría</option>
+              <option value="desayuno">Desayuno</option>
+              <option value="almuerzo">Almuerzo</option>
+              <option value="cena">Cena</option>
+              <option value="postre">Postre</option>
+              <option value="saludable">Saludable</option>
+              <option value="vegetariano">Vegetariano</option>
+            </select>
+          </div>
+          
+          <!-- Campo para búsqueda por ingredientes (inicialmente oculto) -->
+          <div id="search-ingredientes-container" style="display: none; margin-top: 10px;">
+            <div class="search-ingredients-list" id="search-ingredients-tags"></div>
+            <div class="ingredient-row">
+              <input type="text" id="ingrediente-input" class="search-input" placeholder="Añade un ingrediente...">
+              <button type="button" id="add-search-ingredient" class="add-search-ingredient">+</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn-search" id="btn-search">Buscar</button>
+      </div>
+    </div>
+
+    <!-- Botón para agregar receta -->
+    <button class="btn-add" id="btn-add-recipe">
+      <i class="fas fa-plus"></i> Agregar nueva receta
+    </button>
+
+    <!-- Resultados de búsqueda -->
+    <div class="search-results" id="search-results">
+      <h2>Resultados de búsqueda</h2>
+      <div class="recetas-grid" id="search-results-grid">
+        <!-- Los resultados se cargarán aquí dinámicamente -->
+      </div>
+    </div>
+
+    <div class="destacadas">
+      <h2>Recetas Destacadas</h2>
+      
+      <div class="recetas-grid">
+        <div class="receta">
+          <div class="receta-img pizza"></div>
+          <div class="receta-info">
+            <h3>Pizza Casera</h3>
+            <p>Masa suave, salsa de tomate natural y mucho queso. ¡Ideal para compartir!</p>
+            <div class="receta-footer">
+              <span class="tiempo">⏱️ 45 minutos</span>
+              <a href="receta.html?id=1" class="btn">Ver receta</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="receta">
+          <div class="receta-img galletas"></div>
+          <div class="receta-info">
+            <h3>Galletitas de Avena</h3>
+            <p>Sin azúcar y muy fáciles de hacer. Perfectas para el desayuno.</p>
+            <div class="receta-footer">
+              <span class="tiempo">⏱️ 30 minutos</span>
+              <a href="receta.html?id=2" class="btn">Ver receta</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="receta">
+          <div class="receta-img quinoa"></div>
+          <div class="receta-info">
+            <h3>Ensalada de Quinoa</h3>
+            <p>Liviana y nutritiva, con palta, tomate y limón.</p>
+            <div class="receta-footer">
+              <span class="tiempo">⏱️ 20 minutos</span>
+              <a href="receta.html?id=3" class="btn">Ver receta</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para agregar receta -->
+  <div id="add-recipe-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Agregar Nueva Receta</h2>
+      <form id="add-recipe-form">
+        <div class="form-group">
+          <label for="recipe-name">Nombre de la receta</label>
+          <input type="text" id="recipe-name" name="nombre" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="recipe-time">Tiempo de preparación (minutos)</label>
+          <input type="number" id="recipe-time" name="tiempo" min="1" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="recipe-category">Categoría</label>
+          <select id="recipe-category" name="categoria" required>
+            <option value="">Selecciona una categoría</option>
+            <option value="desayuno">Desayuno</option>
+            <option value="almuerzo">Almuerzo</option>
+            <option value="cena">Cena</option>
+            <option value="postre">Postre</option>
+            <option value="saludable">Saludable</option>
+            <option value="vegetariano">Vegetariano</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Ingredientes</label>
+          <div id="ingredients-container">
+            <div class="ingredient-row">
+              <input type="text" name="ingredientes[]" placeholder="Ingrediente" required>
+              <button type="button" class="remove-ingredient">-</button>
+            </div>
+          </div>
+          <button type="button" class="add-ingredient" id="add-ingredient-btn">+ Agregar otro ingrediente</button>
+        </div>
+        
+        <div class="form-group">
+          <label for="recipe-instructions">Instrucciones de preparación</label>
+          <textarea id="recipe-instructions" name="instrucciones" required></textarea>
+        </div>
+        
+        <button type="submit" class="submit-recipe">Guardar Receta</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Recetas en Casa - Todos los derechos reservados</p>
+  </footer>
+
+  <script src="config.js"></script>
+  <script>
+    // Verificar si hay usuario logueado
+    /*document.addEventListener('DOMContentLoaded', function() {
+      const usuario = localStorage.getItem('usuario');
+      if (!usuario) {
+        // Si no hay usuario, redirigir al login
+        window.location.href = 'index.html';
+      }
+    });*/ 
+    // Configuración de tipos de búsqueda
+    const searchTypeRadios = document.querySelectorAll('input[name="search-type"]');
+    const searchNombreContainer = document.getElementById('search-nombre-container');
+    const searchCategoriaContainer = document.getElementById('search-categoria-container');
+    const searchIngredientesContainer = document.getElementById('search-ingredientes-container');
+    const apiBaseUrl = apiConfig.apiBaseUrl;    
+
+    // Array para almacenar ingredientes de búsqueda
+    let searchIngredients = [];
+    
+    // Cambiar tipo de búsqueda
+    searchTypeRadios.forEach(radio => {
+      radio.addEventListener('change', function() {
+        // Ocultar todos los contenedores de búsqueda
+        searchNombreContainer.style.display = 'none';
+        searchCategoriaContainer.style.display = 'none';
+        searchIngredientesContainer.style.display = 'none';
+        
+        // Mostrar el contenedor correspondiente al tipo seleccionado
+        if (this.value === 'nombre') {
+          searchNombreContainer.style.display = 'block';
+        } else if (this.value === 'categoria') {
+          searchCategoriaContainer.style.display = 'block';
+        } else if (this.value === 'ingredientes') {
+          searchIngredientesContainer.style.display = 'block';
+        }
+      });
+    });
+    
+    // Gestión de ingredientes para búsqueda
+    const addSearchIngredientBtn = document.getElementById('add-search-ingredient');
+    const ingredienteInput = document.getElementById('ingrediente-input');
+    const searchIngredientsTagsContainer = document.getElementById('search-ingredients-tags');
+    
+    // Función para agregar un ingrediente a la búsqueda
+    function addSearchIngredient() {
+      const ingrediente = ingredienteInput.value.trim();
+      if (ingrediente && !searchIngredients.includes(ingrediente)) {
+        searchIngredients.push(ingrediente);
+        renderSearchIngredientTags();
+        ingredienteInput.value = '';
+        ingredienteInput.focus();
+      }
+    }
+    
+    // Agregar ingrediente al hacer clic en el botón +
+    addSearchIngredientBtn.addEventListener('click', addSearchIngredient);
+    
+    // Agregar ingrediente al presionar Enter
+    ingredienteInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addSearchIngredient();
+      }
+    });
+    
+    // Renderizar etiquetas de ingredientes
+    function renderSearchIngredientTags() {
+      searchIngredientsTagsContainer.innerHTML = '';
+      
+      searchIngredients.forEach((ingrediente, index) => {
+        const tag = document.createElement('div');
+        tag.className = 'ingredient-tag';
+        tag.innerHTML = `
+          ${ingrediente}
+          <button type="button" class="remove-tag" data-index="${index}">×</button>
+        `;
+        searchIngredientsTagsContainer.appendChild(tag);
+      });
+      
+      // Agregar listeners a los botones de eliminar
+      document.querySelectorAll('.remove-tag').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          searchIngredients.splice(index, 1);
+          renderSearchIngredientTags();
+        });
+      });
+    }
+
+    // Modal para agregar receta
+    const modal = document.getElementById('add-recipe-modal');
+    const btnAddRecipe = document.getElementById('btn-add-recipe');
+    const closeBtn = document.getElementsByClassName('close')[0];
+
+    btnAddRecipe.onclick = function() {
+      modal.style.display = 'block';
+    }
+
+    closeBtn.onclick = function() {
+      modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    // Agregar y eliminar ingredientes en el formulario de receta
+    const addIngredientBtn = document.getElementById('add-ingredient-btn');
+    const ingredientsContainer = document.getElementById('ingredients-container');
+
+    addIngredientBtn.addEventListener('click', function() {
+      const ingredientRow = document.createElement('div');
+      ingredientRow.className = 'ingredient-row';
+      ingredientRow.innerHTML = `
+        <input type="text" name="ingredientes[]" placeholder="Ingrediente" required>
+        <button type="button" class="remove-ingredient">-</button>
+      `;
+      ingredientsContainer.appendChild(ingredientRow);
+      
+      // Agregar evento al botón de eliminar
+      const removeBtn = ingredientRow.querySelector('.remove-ingredient');
+      removeBtn.addEventListener('click', function() {
+        ingredientsContainer.removeChild(ingredientRow);
+      });
+    });
+
+    // Agregar listener a botones de eliminar existentes
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.className === 'remove-ingredient') {
+        const row = e.target.parentNode;
+        ingredientsContainer.removeChild(row);
+      }
+    });
+
+    
+    // Enviar formulario de receta (GUARDAR RECETA)
+  document.getElementById('add-recipe-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const ingredientInputs = document.querySelectorAll('input[name="ingredientes[]"]');
+    const ingredientes = Array.from(ingredientInputs).map(input => input.value);
+
+    const usuarioJSON = localStorage.getItem('usuario');
+    const usuario = JSON.parse(usuarioJSON || '{"email": "invitado@ejemplo.com", "nombre": "Invitado"}');
+
+    const recetaData = {
+      nombre: document.getElementById('recipe-name').value,
+      tiempo: document.getElementById('recipe-time').value,
+      categoria: document.getElementById('recipe-category').value,
+      ingredientes: ingredientes.join(', '),
+      instrucciones: document.getElementById('recipe-instructions').value,
+      usuario_email: usuario.email
+    };
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/guardar_receta`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(recetaData)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('¡Receta guardada correctamente!');
+        modal.style.display = 'none';
+        document.getElementById('add-recipe-form').reset();
+        location.reload();
+      } else {
+        alert('Error al guardar la receta: ' + result.mensaje);
+      }
+    } catch (error) {
+      alert('Error al conectar con el servidor. Intenta más tarde.');
+      console.error(error);
+    }
+  });
+
+  // Búsqueda de recetas (ACTUALIZADA)
+  document.getElementById('btn-search').addEventListener('click', async function() {
+    const searchType = document.querySelector('input[name="search-type"]:checked').value;
+    let searchParams = '';
+
+    if (searchType === 'nombre') {
+      const searchInput = document.getElementById('search-input').value.trim();
+      if (!searchInput) {
+        alert('Por favor, ingresa un término de búsqueda');
+        return;
+      }
+      searchParams = `nombre=${encodeURIComponent(searchInput)}`;
+    } 
+    else if (searchType === 'categoria') {
+      const categoria = document.getElementById('categoria-select').value;
+      if (!categoria) {
+        alert('Por favor, selecciona una categoría');
+        return;
+      }
+      searchParams = `categoria=${encodeURIComponent(categoria)}`;
+    }
+    else if (searchType === 'ingredientes') {
+      if (searchIngredients.length === 0) {
+        alert('Por favor, agrega al menos un ingrediente');
+        return;
+      }
+      searchParams = `ingredientes=${encodeURIComponent(searchIngredients.join(','))}`;
+    }
+
+    try {
+      let url = `${apiBaseUrl}/busqueda?${searchParams}`;
+      const response = await fetch(url);
+      const recetas = await response.json();
+      displaySearchResults(recetas);
+    } catch (error) {
+      console.error('Error en la búsqueda:', error);
+      alert('Error al buscar recetas. Intenta más tarde.');
+    }
+  });
+
+    // Mostrar resultados de búsqueda
+    function displaySearchResults(recetas) {
+      const resultsContainer = document.getElementById('search-results');
+      const resultsGrid = document.getElementById('search-results-grid');
+      
+      // Limpiar resultados anteriores
+      resultsGrid.innerHTML = '';
+      
+      if (recetas.length === 0) {
+        resultsGrid.innerHTML = '<p>No se encontraron recetas que coincidan con tu búsqueda.</p>';
+        resultsContainer.style.display = 'block';
+        return;
+      }
+      
+      // Crear tarjetas para cada receta encontrada
+      recetas.forEach(receta => {
+        const recetaCard = document.createElement('div');
+        recetaCard.className = 'receta';
+        
+        // Usamos una imagen genérica de comida
+        const imgClass = ['pizza', 'galletas', 'quinoa'][Math.floor(Math.random() * 3)];
+        
+        // Limitamos la longitud del texto de instrucciones para mostrar
+        const instruccionesCortas = receta.instrucciones 
+          ? receta.instrucciones.substring(0, 100) + '...'
+          : 'No hay instrucciones disponibles.';
+        
+        recetaCard.innerHTML = `
+          <div class="receta-img ${imgClass}"></div>
+          <div class="receta-info">
+            <h3>${receta.nombre}</h3>
+            <p>${instruccionesCortas}</p>
+            <div class="receta-footer">
+              <span class="tiempo">⏱️ ${receta.tiempo} minutos</span>
+              <a href="receta.html?id=${receta.id_receta}" class="btn">Ver receta</a>
+            </div>
+          </div>
+        `;
+        
+        resultsGrid.appendChild(recetaCard);
+      });
+      
+      resultsContainer.style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
