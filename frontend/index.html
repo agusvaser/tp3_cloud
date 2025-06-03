@@ -17,7 +17,6 @@
       position: relative;
     }
 
-    /* Comida flotante */
     .icono-flotante {
       position: absolute;
       opacity: 0.08;
@@ -183,7 +182,9 @@
       <div class="tabs">
         <div class="tab active" id="tab-login">Iniciar Sesión</div>
         <div class="tab" id="tab-register">Registrarse</div>
+        <div class="tab" id="tab-verificar" style="display: none;">Verificar cuenta</div>
       </div>
+
       <div class="form-content active" id="form-login-content">
         <h1>Bienvenido de Nuevo</h1>
         <form id="form-login">
@@ -193,6 +194,7 @@
         </form>
         <div class="mensaje" id="mensaje-login"></div>
       </div>
+
       <div class="form-content" id="form-register-content">
         <h1>Registro de Usuario</h1>
         <form id="form-registro">
@@ -203,6 +205,16 @@
         </form>
         <div class="mensaje" id="mensaje-registro"></div>
       </div>
+
+      <div class="form-content" id="form-verificar-content">
+        <h1>Verificar Cuenta</h1>
+        <form id="form-verificar">
+          <input type="email" name="email" placeholder="Correo electrónico" required>
+          <input type="text" name="code" placeholder="Código de verificación" required>
+          <button type="submit">Confirmar</button>
+        </form>
+        <div class="mensaje" id="mensaje-verificar"></div>
+      </div>
     </div>
     <div class="image-container"></div>
   </div>
@@ -212,112 +224,134 @@
   <script src="config.js"></script>
 
   <script>
-    // Cambio de pestañas
-    document.getElementById("tab-login").addEventListener("click", function() {
-      switchTab('login');
-    });
-    document.getElementById("tab-register").addEventListener("click", function() {
-      switchTab('register');
-    });
+    const apiBaseUrl = apiConfig.apiBaseUrl;
+
+    // Pestañas
+    document.getElementById("tab-login").addEventListener("click", () => switchTab('login'));
+    document.getElementById("tab-register").addEventListener("click", () => switchTab('register'));
+    document.getElementById("tab-verificar").addEventListener("click", () => switchTab('verificar'));
+
     function switchTab(tab) {
-      document.getElementById("tab-login").classList.remove("active");
-      document.getElementById("tab-register").classList.remove("active");
+      const tabs = ["login", "register", "verificar"];
+      tabs.forEach(t => {
+        document.getElementById("tab-" + t).classList.remove("active");
+        document.getElementById("form-" + t + "-content").classList.remove("active");
+      });
       document.getElementById("tab-" + tab).classList.add("active");
-      document.getElementById("form-login-content").classList.remove("active");
-      document.getElementById("form-register-content").classList.remove("active");
       document.getElementById("form-" + tab + "-content").classList.add("active");
     }
 
-    // API base URL
-  const apiBaseUrl = apiConfig.apiBaseUrl;    
+    // Registro
+    document.getElementById("form-registro").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const mensajeEl = document.getElementById("mensaje-registro");
+      mensajeEl.className = "mensaje";
+      mensajeEl.textContent = "Procesando...";
 
-// Registro de usuario
-document.getElementById("form-registro").addEventListener("submit", async function (e) {
-  e.preventDefault();
-  const mensajeEl = document.getElementById("mensaje-registro");
-  mensajeEl.className = "mensaje";
-  mensajeEl.textContent = "Procesando...";
+      const datos = {
+        email: this.email.value,
+        password: this.password.value
+      };
 
-  const datos = {
-    nombre: this.nombre.value,
-    email: this.email.value,
-    password: this.password.value
-  };
+      try {
+        const respuesta = await fetch(`${apiBaseUrl}/registro`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(datos)
+        });
 
-  try {
-    const respuesta = await fetch(`${apiBaseUrl}/registro`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(datos)
+        const resultado = await respuesta.json();
+
+        if (respuesta.ok) {
+          mensajeEl.className = "mensaje success";
+          mensajeEl.textContent = "Registro exitoso. Verificá tu correo.";
+          // Mostrar y cambiar a pestaña de verificación
+          document.getElementById("tab-verificar").style.display = "inline-block";
+          switchTab('verificar');
+        } else {
+          mensajeEl.className = "mensaje error";
+          mensajeEl.textContent = resultado.error || "Error al registrar.";
+        }
+      } catch (error) {
+        mensajeEl.className = "mensaje error";
+        mensajeEl.textContent = "Error al conectar con el servidor.";
+      }
     });
 
-    const resultado = await respuesta.json();
+    // Inicio de sesión
+    document.getElementById("form-login").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const mensajeEl = document.getElementById("mensaje-login");
+      mensajeEl.className = "mensaje";
+      mensajeEl.textContent = "Verificando...";
 
-    if (respuesta.ok) {
-      mensajeEl.className = "mensaje success";
-      mensajeEl.textContent = "¡Registro exitoso! Redirigiendo...";
-      localStorage.setItem("usuario", JSON.stringify({
-        email: datos.email,
-        nombre: datos.nombre
-      }));
-      setTimeout(() => {
-        window.location.href = "home.html";
-      }, 1000);
-    } else {
-      mensajeEl.className = "mensaje error";
-      mensajeEl.textContent = resultado.mensaje || "Error al registrar. Intenta más tarde.";
-    }
-  } catch (error) {
-    mensajeEl.className = "mensaje error";
-    mensajeEl.textContent = "Error al conectar con el servidor. Intenta más tarde.";
-  }
-});
+      const datos = {
+        email: this.email.value,
+        password: this.password.value
+      };
 
-// Login de usuario
-document.getElementById("form-login").addEventListener("submit", async function (e) {
-  e.preventDefault();
-  const mensajeEl = document.getElementById("mensaje-login");
-  mensajeEl.className = "mensaje";
-  mensajeEl.textContent = "Verificando...";
+      try {
+        const respuesta = await fetch(`${apiBaseUrl}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(datos)
+        });
 
-  const datos = {
-    email: this.email.value,
-    password: this.password.value
-  };
+        const resultado = await respuesta.json();
 
-  try {
-    const respuesta = await fetch(`${apiBaseUrl}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(datos)
+        if (respuesta.ok) {
+          mensajeEl.className = "mensaje success";
+          mensajeEl.textContent = resultado.message || "Sesión iniciada.";
+          localStorage.setItem("usuario", JSON.stringify({
+            email: datos.email,
+            token: resultado.id_token
+          }));
+          setTimeout(() => {
+            window.location.href = "home.html";
+          }, 1000);
+        } else {
+          mensajeEl.className = "mensaje error";
+          mensajeEl.textContent = resultado.error || "Credenciales incorrectas.";
+        }
+      } catch (error) {
+        mensajeEl.className = "mensaje error";
+        mensajeEl.textContent = "Error al conectar con el servidor.";
+      }
     });
 
-    const resultado = await respuesta.json();
+    // Confirmar cuenta
+    document.getElementById("form-verificar").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const mensajeEl = document.getElementById("mensaje-verificar");
+      mensajeEl.className = "mensaje";
+      mensajeEl.textContent = "Procesando...";
 
-    if (respuesta.ok) {
-      mensajeEl.className = "mensaje success";
-      mensajeEl.textContent = "¡Bienvenido! Redirigiendo...";
-      localStorage.setItem("usuario", JSON.stringify({
-        email: datos.email,
-        nombre: resultado.nombre
-      }));
-      setTimeout(() => {
-        window.location.href = "home.html";
-      }, 1000);
-    } else {
-      mensajeEl.className = "mensaje error";
-      mensajeEl.textContent = "Credenciales incorrectas. Intenta nuevamente.";
-    }
-  } catch (error) {
-    mensajeEl.className = "mensaje error";
-    mensajeEl.textContent = "Error al conectar con el servidor. Intenta más tarde.";
-  }
-});
+      const datos = {
+        email: this.email.value,
+        code: this.code.value
+      };
 
+      try {
+        const respuesta = await fetch(`${apiBaseUrl}/confirmar`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(datos)
+        });
+
+        const resultado = await respuesta.json();
+
+        if (respuesta.ok) {
+          mensajeEl.className = "mensaje success";
+          mensajeEl.textContent = resultado.message || "Cuenta verificada. Ya podés iniciar sesión.";
+        } else {
+          mensajeEl.className = "mensaje error";
+          mensajeEl.textContent = resultado.error || "Error al confirmar cuenta.";
+        }
+      } catch (error) {
+        mensajeEl.className = "mensaje error";
+        mensajeEl.textContent = "Error al conectar con el servidor.";
+      }
+    });
   </script>
 </body>
 </html>

@@ -83,27 +83,72 @@ resource "aws_lambda_permission" "permitir_busqueda_recetas" {
   source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/*/*"
 }
 
-# ---- Registro Usuario (POST) ----
-resource "aws_apigatewayv2_integration" "registro_post" {
+# ---- Registro Usuario Cognito (POST) ----
+resource "aws_apigatewayv2_integration" "registro_cognito" {
   api_id                 = aws_apigatewayv2_api.this.id
   integration_type       = "AWS_PROXY"
-  integration_uri        = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${var.lambda_arns["registroUsuario"]}/invocations"
+  integration_uri        = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${var.lambda_arns["registroCognito"]}/invocations"
   payload_format_version = "2.0"
 }
 
-resource "aws_apigatewayv2_route" "registro_post" {
+resource "aws_apigatewayv2_route" "registro_cognito" {
   api_id    = aws_apigatewayv2_api.this.id
   route_key = "POST /registro"
-  target    = "integrations/${aws_apigatewayv2_integration.registro_post.id}"
+  target    = "integrations/${aws_apigatewayv2_integration.registro_cognito.id}"
 }
 
-resource "aws_lambda_permission" "permitir_registro_usuario" {
-  statement_id  = "AllowExecutionFromAPIGateway_RegistroUsuario"
+resource "aws_lambda_permission" "permitir_registro_cognito" {
+  statement_id  = "AllowExecutionFromAPIGateway_RegistroCognito"
   action        = "lambda:InvokeFunction"
-  function_name = var.lambda_arns["registroUsuario"]
+  function_name = var.lambda_arns["registroCognito"]
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/*/*"
 }
+
+# ---- Inicio Sesión Usuario Cognito (POST) ----
+resource "aws_apigatewayv2_integration" "login_cognito" {
+  api_id                 = aws_apigatewayv2_api.this.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${var.lambda_arns["inicioSesionCognito"]}/invocations"
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "login_cognito" {
+  api_id    = aws_apigatewayv2_api.this.id
+  route_key = "POST /login"
+  target    = "integrations/${aws_apigatewayv2_integration.login_cognito.id}"
+}
+
+resource "aws_lambda_permission" "permitir_login_cognito" {
+  statement_id  = "AllowExecutionFromAPIGateway_LoginCognito"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_arns["inicioSesionCognito"]
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/*/*"
+}
+
+# ---- Confirmar Usuario (POST) ----
+resource "aws_apigatewayv2_integration" "confirmar_usuario" {
+  api_id                 = aws_apigatewayv2_api.this.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${var.lambda_arns["confirmarUsuarioCognito"]}/invocations"
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "confirmar_usuario" {
+  api_id    = aws_apigatewayv2_api.this.id
+  route_key = "POST /confirmar"
+  target    = "integrations/${aws_apigatewayv2_integration.confirmar_usuario.id}"
+}
+
+resource "aws_lambda_permission" "permitir_confirmar_usuario" {
+  statement_id  = "AllowExecutionFromAPIGateway_ConfirmarUsuario"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_arns["confirmarUsuarioCognito"]
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/*/*"
+}
+
 
 #########################################
 # Stage de despliegue (auto deploy)

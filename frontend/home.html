@@ -641,14 +641,33 @@
 
   <script src="config.js"></script>
   <script>
-    // Verificar si hay usuario logueado
-    /*document.addEventListener('DOMContentLoaded', function() {
-      const usuario = localStorage.getItem('usuario');
-      if (!usuario) {
-        // Si no hay usuario, redirigir al login
-        window.location.href = 'index.html';
+    //Verificar sesión activa y token válido
+    const usuarioGuardado = localStorage.getItem("usuario");
+    if (!usuarioGuardado) {
+      window.location.href = "index.html";
+    } else {
+      const usuario = JSON.parse(usuarioGuardado);
+      if (!usuario.token) {
+        window.location.href = "index.html";
       }
-    });*/ 
+
+      try {
+        const tokenParts = usuario.token.split('.');
+        const payload = JSON.parse(atob(tokenParts[1]));
+        const exp = payload.exp;
+        const ahora = Math.floor(Date.now() / 1000);
+
+        if (exp < ahora) {
+          alert("Sesión expirada. Iniciá sesión nuevamente.");
+          localStorage.removeItem("usuario");
+          window.location.href = "index.html";
+        }
+      } catch (e) {
+        console.error("Error al verificar token:", e);
+        window.location.href = "index.html";
+      }
+    }
+    
     // Configuración de tipos de búsqueda
     const searchTypeRadios = document.querySelectorAll('input[name="search-type"]');
     const searchNombreContainer = document.getElementById('search-nombre-container');

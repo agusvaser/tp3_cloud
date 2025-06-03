@@ -62,10 +62,6 @@ module "lambdas" {
   
 lambda_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LabRole"
   lambdas = {
-    "registroUsuario" = {
-      source_zip = "lambdas/registroUsuario/lambda_function.zip"
-      env_vars   = {}
-    },
     "guardarReceta" = {
       source_zip = "lambdas/guardarReceta/lambda_function.zip"
       env_vars   = {}
@@ -77,6 +73,24 @@ lambda_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:r
     "obtenerReceta" = {
       source_zip = "lambdas/obtenerReceta/lambda_function.zip"
       env_vars   = {}
+    },
+    "inicioSesionCognito" = {
+      source_zip = "lambdas/inicioSesionCognito/lambda_function.zip"
+      env_vars   = {
+        COGNITO_CLIENT_ID = module.cognito.client_id
+      }
+    },
+    "registroCognito" = {
+      source_zip = "lambdas/registroCognito/lambda_function.zip"
+      env_vars   = {
+        COGNITO_CLIENT_ID = module.cognito.client_id
+      }
+    },
+    "confirmarUsuarioCognito" = {
+      source_zip = "lambdas/confirmarUsuarioCognito/lambda_function.zip"
+      env_vars   = {
+        COGNITO_CLIENT_ID = module.cognito.client_id
+      }
     }
   }
 }
@@ -91,7 +105,9 @@ module "api_gateway" {
     guardarReceta    = module.lambdas.lambda_arns["guardarReceta"]
     obtenerReceta    = module.lambdas.lambda_arns["obtenerReceta"]
     busquedaRecetas  = module.lambdas.lambda_arns["busquedaRecetas"]
-    registroUsuario  = module.lambdas.lambda_arns["registroUsuario"]
+    registroCognito = module.lambdas.lambda_arns["registroCognito"]
+    inicioSesionCognito = module.lambdas.lambda_arns["inicioSesionCognito"]
+    confirmarUsuarioCognito = module.lambdas.lambda_arns["confirmarUsuarioCognito"]
   }
 }
 
@@ -107,4 +123,9 @@ resource "local_file" "api_config" {
     };
   EOT
   filename = "${path.module}/build/config.js"
+}
+
+module "cognito" {
+  source          = "./modules/cognito"
+  user_pool_name  = "recetas-user-pool"
 }

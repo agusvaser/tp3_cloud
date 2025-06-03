@@ -389,55 +389,61 @@
   </footer>
   <script src="config.js"></script>
   <script>
-    const apiBaseUrl = apiConfig.apiBaseUrl;    
-    // Verificar si hay usuario logueado
-    document.addEventListener('DOMContentLoaded', function() {
-      // Comentado para facilitar pruebas - descomenta en producción
-      /*const usuario = localStorage.getItem('usuario');
-      if (!usuario) {
-        // Si no hay usuario, redirigir al login
-        window.location.href = 'index.html';
-        return;
-      }*/
-      
-      // Obtener el ID de la receta de la URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const recetaId = urlParams.get('id');
-      
-      if (!recetaId) {
-        // Si no hay ID, mostrar mensaje de error
-        document.getElementById('cargando').style.display = 'none';
-        document.getElementById('receta-no-encontrada').style.display = 'block';
-        return;
+    const apiBaseUrl = apiConfig.apiBaseUrl;
+  
+    // Verificar sesión activa y token válido
+    //Verificar sesión activa y token válido
+    const usuarioGuardado = localStorage.getItem("usuario");
+    if (!usuarioGuardado) {
+      window.location.href = "index.html";
+    } else {
+      const usuario = JSON.parse(usuarioGuardado);
+      if (!usuario.token) {
+        window.location.href = "index.html";
       }
-      
-      // Cargar los detalles de la receta
-      cargarReceta(recetaId);
-    });
+
+      try {
+        const tokenParts = usuario.token.split('.');
+        const payload = JSON.parse(atob(tokenParts[1]));
+        const exp = payload.exp;
+        const ahora = Math.floor(Date.now() / 1000);
+
+        if (exp < ahora) {
+          alert("Sesión expirada. Iniciá sesión nuevamente.");
+          localStorage.removeItem("usuario");
+          window.location.href = "index.html";
+        }
+      } catch (e) {
+        console.error("Error al verificar token:", e);
+        window.location.href = "index.html";
+      }
+    }
     
+  
+    // Obtener el ID de la receta de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const recetaId = urlParams.get('id');
+  
+    if (!recetaId) {
+      // Si no hay ID, mostrar mensaje de error
+      document.getElementById('cargando').style.display = 'none';
+      document.getElementById('receta-no-encontrada').style.display = 'block';
+    } else {
+      cargarReceta(recetaId);
+    }
+  
     async function cargarReceta(id) {
       try {
         const response = await fetch(`${apiBaseUrl}/recetas/${id}`);
-
-        
-        if (!response.ok) {
-          throw new Error('Receta no encontrada');
-        }
-        
+        if (!response.ok) throw new Error('Receta no encontrada');
         const receta = await response.json();
-        
-        // Ocultar mensaje de carga
+  
         document.getElementById('cargando').style.display = 'none';
-        
-        // Mostrar detalles de la receta
         document.getElementById('receta-detalle').style.display = 'block';
-        
-        // Actualizar datos de la receta en la interfaz
         document.getElementById('receta-nombre').textContent = receta.nombre;
         document.getElementById('receta-categoria').textContent = receta.categoria;
         document.getElementById('receta-tiempo').textContent = receta.tiempo;
-        
-        // Asignar imagen según categoría (podrías mejorarlo para usar imágenes específicas)
+  
         const imgClasses = {
           'desayuno': 'url("https://images.unsplash.com/photo-1533089860892-a9b969df67af?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")',
           'almuerzo': 'url("https://images.unsplash.com/photo-1547592180-85f173990554?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")',
@@ -445,99 +451,64 @@
           'postre': 'url("https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")',
           'default': 'url("https://images.unsplash.com/photo-1506368249639-73a05d6f6488?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")'
         };
-        
+  
         const imgUrl = imgClasses[receta.categoria.toLowerCase()] || imgClasses.default;
         document.getElementById('receta-imagen').style.backgroundImage = imgUrl;
-        
-        // Mostrar autor
-        const usuarioJSON = localStorage.getItem('usuario');
-        const usuario = JSON.parse(usuarioJSON || '{"nombre": ""}');
-        
-        if (receta.usuario_email) {
-          document.getElementById('receta-autor').textContent = `Creado por: ${receta.usuario_nombre || 'Usuario'}`;
-        } else {
-          document.getElementById('receta-autor').textContent = 'Receta de la comunidad';
-        }
-        
-        // Cargar ingredientes
+  
+        document.getElementById('receta-autor').textContent = receta.usuario_email
+          ? `Creado por: ${receta.usuario_nombre || 'Usuario'}`
+          : 'Receta de la comunidad';
+  
         const ingredientesLista = document.getElementById('ingredientes-lista');
         ingredientesLista.innerHTML = '';
-        
-        if (Array.isArray(receta.ingredientes)) {
-          receta.ingredientes.forEach(ingrediente => {
-            const li = document.createElement('li');
-            li.className = 'ingrediente-item';
-            li.textContent = ingrediente;
-            ingredientesLista.appendChild(li);
-          });
-        } else {
-          // Si los ingredientes llegan como string, intentamos dividirlos
-          const ingredientesArray = receta.ingredientes.split(',');
-          ingredientesArray.forEach(ingrediente => {
-            const li = document.createElement('li');
-            li.className = 'ingrediente-item';
-            li.textContent = ingrediente.trim();
-            ingredientesLista.appendChild(li);
-          });
-        }
-        
-        // Cargar instrucciones
+        const ingredientes = Array.isArray(receta.ingredientes)
+          ? receta.ingredientes
+          : receta.ingredientes.split(',');
+  
+        ingredientes.forEach(ingrediente => {
+          const li = document.createElement('li');
+          li.className = 'ingrediente-item';
+          li.textContent = ingrediente.trim();
+          ingredientesLista.appendChild(li);
+        });
+  
         const instruccionesLista = document.getElementById('instrucciones-lista');
         instruccionesLista.innerHTML = '';
-        
-        // Dividir las instrucciones en pasos
-        let instrucciones;
-        if (receta.pasos) {
-          instrucciones = receta.pasos;
-        } else if (receta.instrucciones) {
-          instrucciones = receta.instrucciones;
-        } else {
-          instrucciones = "No hay instrucciones disponibles.";
-        }
-        
-        // Intentamos dividir por números o puntos si viene como texto
+        let instrucciones = receta.pasos || receta.instrucciones || "No hay instrucciones disponibles.";
+  
         if (typeof instrucciones === 'string') {
-          // Dividir por números o puntos seguidos de espacio
-          const instruccionesDivididas = instrucciones.split(/\d+\.\s|\n/);
-          
-          instruccionesDivididas.forEach(instruccion => {
-            if (instruccion.trim()) {
+          instrucciones.split(/\d+\.\s|\n/).forEach(instr => {
+            if (instr.trim()) {
               const li = document.createElement('li');
               li.className = 'instruccion-item';
-              li.textContent = instruccion.trim();
+              li.textContent = instr.trim();
               instruccionesLista.appendChild(li);
             }
           });
         } else if (Array.isArray(instrucciones)) {
-          instrucciones.forEach(instruccion => {
+          instrucciones.forEach(instr => {
             const li = document.createElement('li');
             li.className = 'instruccion-item';
-            li.textContent = instruccion;
+            li.textContent = instr;
             instruccionesLista.appendChild(li);
           });
         }
-        
-        // Configurar botones de acciones
-        document.getElementById('btn-guardar').addEventListener('click', function() {
-          // Aquí implementarías la lógica para guardar en favoritos
+  
+        document.getElementById('btn-guardar').addEventListener('click', function () {
           alert('Receta guardada en favoritos');
           this.innerHTML = '<i class="fas fa-bookmark"></i> Guardada';
           this.disabled = true;
         });
-        
-        document.getElementById('btn-compartir').addEventListener('click', function() {
-          // Copiar al portapapeles
-          const url = window.location.href;
-          navigator.clipboard.writeText(url)
-            .then(() => {
-              alert('Enlace copiado al portapapeles');
-            })
+  
+        document.getElementById('btn-compartir').addEventListener('click', function () {
+          navigator.clipboard.writeText(window.location.href)
+            .then(() => alert('Enlace copiado al portapapeles'))
             .catch(err => {
               console.error('Error al copiar: ', err);
               alert('No se pudo copiar el enlace');
             });
         });
-        
+  
       } catch (error) {
         console.error('Error al cargar la receta:', error);
         document.getElementById('cargando').style.display = 'none';
@@ -545,6 +516,6 @@
       }
     }
   </script>
-
+  
 </body>
 </html>
