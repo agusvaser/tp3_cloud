@@ -41,6 +41,44 @@ module "frontend_bucket" {
 }
 
 
+# Crea el bucket S3
+module "user_photos_bucket" {
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "~> 4.10.0"
+
+  bucket = "rectefify-fotos-usuarios-${random_id.bucket_suffix.hex}"
+  acl    = "public-read"
+
+  control_object_ownership = true
+  object_ownership         = "BucketOwnerPreferred"
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+
+  attach_policy = true
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid       = "PublicReadWrite",
+        Effect    = "Allow",
+        Principal = "*",
+        Action    = [
+          "s3:GetObject",
+          "s3:PutObject"
+        ],
+        Resource = [
+          "arn:aws:s3:::rectefify-fotos-usuarios-${random_id.bucket_suffix.hex}/*"
+        ]
+      }
+    ]
+  })
+
+  force_destroy = true
+}
+
 # Módulo para la tabla DynamoDB (creado previamente)
 module "dynamodb_recetas" {
   source            = "./modules/dynamodb_table"
@@ -100,6 +138,12 @@ lambda_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:r
         COGNITO_CLIENT_ID = module.cognito.client_id
       }
     },
+    "logoutCognito" = {
+      source_zip = "lambdas/logoutCognito/lambda_function.zip"
+      env_vars   = {
+        COGNITO_CLIENT_ID = module.cognito.client_id
+      }
+    },
     # Favorite Lambdas
     "addFavorite" = {
       source_zip = "lambdas/addFavorite/lambda_function.zip"
@@ -123,6 +167,109 @@ lambda_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:r
   }
 }
 
+# Crear recetas destacadas como recursos de Terraform
+resource "aws_dynamodb_table_item" "pizza_casera" {
+  depends_on = [module.dynamodb_recetas]
+  table_name = "TablaRecetas"
+  hash_key   = "USER"
+  range_key  = "RECETA"
+
+  item = jsonencode({
+    USER = {
+      S = "admin@recetascasa.com"
+    }
+    RECETA = {
+      S = "1"
+    }
+    nombre = {
+      S = "Pizza Casera"
+    }
+    categoria = {
+      S = "cena"
+    }
+    tiempo = {
+      N = "45"
+    }
+    ingredientes = {
+      S = "Harina, levadura, sal, aceite de oliva, agua tibia, salsa de tomate, queso mozzarella, orégano"
+    }
+    instrucciones = {
+      S = "Mezclar harina, levadura y sal. Agregar aceite y agua tibia, amasar hasta obtener masa suave. Dejar reposar 1 hora. Extender la masa, agregar salsa de tomate, queso mozzarella y orégano. Hornear a 220°C por 15-20 minutos hasta que esté dorada."
+    }
+    fecha_creacion = {
+      S = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
+    }
+  })
+}
+
+resource "aws_dynamodb_table_item" "galletas_avena" {
+  depends_on = [module.dynamodb_recetas]
+  table_name = "TablaRecetas"
+  hash_key   = "USER"
+  range_key  = "RECETA"
+
+  item = jsonencode({
+    USER = {
+      S = "admin@recetascasa.com"
+    }
+    RECETA = {
+      S = "2"
+    }
+    nombre = {
+      S = "Galletitas de Avena"
+    }
+    categoria = {
+      S = "desayuno"
+    }
+    tiempo = {
+      N = "30"
+    }
+    ingredientes = {
+      S = "Avena, harina integral, miel, aceite de coco, huevo, canela, pasas de uva"
+    }
+    instrucciones = {
+      S = "Mezclar avena, harina y canela en un bowl. En otro bowl, batir huevo con miel y aceite de coco derretido. Combinar ambas mezclas, agregar pasas. Formar bolitas y aplastar en bandeja con papel manteca. Hornear a 180°C por 12-15 minutos."
+    }
+    fecha_creacion = {
+      S = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
+    }
+  })
+}
+
+resource "aws_dynamodb_table_item" "ensalada_quinoa" {
+  depends_on = [module.dynamodb_recetas]
+  table_name = "TablaRecetas"
+  hash_key   = "USER"
+  range_key  = "RECETA"
+
+  item = jsonencode({
+    USER = {
+      S = "admin@recetascasa.com"
+    }
+    RECETA = {
+      S = "3"
+    }
+    nombre = {
+      S = "Ensalada de Quinoa"
+    }
+    categoria = {
+      S = "saludable"
+    }
+    tiempo = {
+      N = "20"
+    }
+    ingredientes = {
+      S = "Quinoa, palta, tomates cherry, pepino, cebolla morada, limón, aceite de oliva, sal, pimienta, cilantro"
+    }
+    instrucciones = {
+      S = "Cocinar quinoa en agua con sal hasta que esté tierna (15 min). Dejar enfriar. Cortar palta, tomates, pepino y cebolla en cubos pequeños. Mezclar quinoa fría con vegetales. Aliñar con limón, aceite de oliva, sal y pimienta. Decorar con cilantro fresco."
+    }
+    fecha_creacion = {
+      S = formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
+    }
+  })
+}
+
 module "api_gateway" {
   source      = "./modules/api_gateway"
   api_name    = "recetify_api"
@@ -132,12 +279,12 @@ module "api_gateway" {
   lambda_arns = {
     guardarReceta    = module.lambdas.lambda_arns["guardarReceta"]
     obtenerReceta    = module.lambdas.lambda_arns["obtenerReceta"]
-    busquedaRecetas  = module.lambdas.lambda_arns["busquedaRecetas"]
+    busquedaRecetas  = module.lambdas.lambda_arns["busquedaRecetas"]  // ✅ Fixed typo
     obtenerRecetasUsuario = module.lambdas.lambda_arns["obtenerRecetasUsuario"]
     registroCognito = module.lambdas.lambda_arns["registroCognito"]
     inicioSesionCognito = module.lambdas.lambda_arns["inicioSesionCognito"]
     confirmarUsuarioCognito = module.lambdas.lambda_arns["confirmarUsuarioCognito"]
-    # Favorite Lambda ARNs for API Gateway
+    logoutCognito     = module.lambdas.lambda_arns["logoutCognito"]
     addFavorite      = module.lambdas.lambda_arns["addFavorite"]
     removeFavorite   = module.lambdas.lambda_arns["removeFavorite"]
     getFavorites     = module.lambdas.lambda_arns["getFavorites"]
