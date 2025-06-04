@@ -24,12 +24,14 @@ module "frontend_bucket" {
     "receta.html"   = "${path.module}/frontend/receta.html"
     "registro.html" = "${path.module}/frontend/registro.html"
     "recetas.png"     = "${path.module}/frontend/recetas.png"
+    "misRecetas.html"= "${path.module}/frontend/misRecetas.html"
     "config.js"     = "${path.module}/build/config.js"
   }
   content_types = {
     "index.html"    = "text/html"
     "home.html"     = "text/html"
     "receta.html"   = "text/html"
+    "misRecetas.html" = "text/html"
     "registro.html" = "text/html"
     "recetas.png"     = "recetas/png"
     "config.js"     = "application/javascript"
@@ -74,6 +76,10 @@ lambda_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:r
       source_zip = "lambdas/obtenerReceta/lambda_function.zip"
       env_vars   = {}
     },
+    "obtenerRecetasUsuario" = {
+      source_zip = "lambdas/obtenerRecetasUsuario/lambda_function.zip"
+      env_vars = {}
+    },
     "inicioSesionCognito" = {
       source_zip = "lambdas/inicioSesionCognito/lambda_function.zip"
       env_vars   = {
@@ -105,6 +111,7 @@ module "api_gateway" {
     guardarReceta    = module.lambdas.lambda_arns["guardarReceta"]
     obtenerReceta    = module.lambdas.lambda_arns["obtenerReceta"]
     busquedaRecetas  = module.lambdas.lambda_arns["busquedaRecetas"]
+    obtenerRecetasUsuario = module.lambdas.lambda_arns["obtenerRecetasUsuario"]
     registroCognito = module.lambdas.lambda_arns["registroCognito"]
     inicioSesionCognito = module.lambdas.lambda_arns["inicioSesionCognito"]
     confirmarUsuarioCognito = module.lambdas.lambda_arns["confirmarUsuarioCognito"]

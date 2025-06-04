@@ -83,6 +83,29 @@ resource "aws_lambda_permission" "permitir_busqueda_recetas" {
   source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/*/*"
 }
 
+# ---- Obtener Recetas Usuario (GET)----
+resource "aws_apigatewayv2_route" "obtener_recetas_usuario" {
+  api_id    = aws_apigatewayv2_api.this.id
+  route_key = "GET /mis-recetas"
+  target    = "integrations/${aws_apigatewayv2_integration.obtener_recetas_usuario.id}"
+}
+
+resource "aws_apigatewayv2_integration" "obtener_recetas_usuario" {
+  api_id           = aws_apigatewayv2_api.this.id
+  integration_type = "AWS_PROXY"
+  integration_uri  = var.lambda_arns["obtenerRecetasUsuario"]
+}
+
+# Permiso para que API Gateway invoque la Lambda
+resource "aws_lambda_permission" "obtener_recetas_usuario" {
+  statement_id  = "AllowExecutionFromAPIGateway_ObtenerRecetasUsuario"
+  action        = "lambda:InvokeFunction"
+  function_name = split(":", var.lambda_arns["obtenerRecetasUsuario"])[6]
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/*/*"
+}
+
+
 # ---- Registro Usuario Cognito (POST) ----
 resource "aws_apigatewayv2_integration" "registro_cognito" {
   api_id                 = aws_apigatewayv2_api.this.id

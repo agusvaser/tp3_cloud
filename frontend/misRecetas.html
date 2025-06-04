@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Recetas - Recetas en Casa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #ff914d;
+      --primary-dark: #ff7a26;
+      --accent-color: #4cb050;
+      --text-color: #333;
+      --light-gray: #f5f5f5;
+      --white: #ffffff;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      padding: 1.2rem 5%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 25px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      padding: 8px 12px;
+      border-radius: 20px;
+    }
+
+    nav a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    nav a.active {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .contenido {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 5%;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .page-header h2 {
+      font-size: 2.2rem;
+      color: var(--primary-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1.1rem;
+      color: #666;
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background-color: var(--white);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      text-align: center;
+      min-width: 150px;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      display: block;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .loading i {
+      font-size: 2rem;
+      color: var(--primary-color);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .no-recetas {
+      text-align: center;
+      padding: 3rem;
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    }
+
+    .no-recetas i {
+      font-size: 4rem;
+      color: #ddd;
+      margin-bottom: 1rem;
+    }
+
+    .no-recetas h3 {
+      color: var(--primary-dark);
+      margin-bottom: 1rem;
+    }
+
+    .recetas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .receta {
+      background-color: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .receta:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+    }
+
+    .receta-img {
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .pizza { background-image: url('https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'); }
+    .galletas { background-image: url('https://images.unsplash.com/photo-1558961363-fa8fdf82db35?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'); }
+    .quinoa { background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'); }
+
+    .receta-info {
+      padding: 1.5rem;
+    }
+
+    .receta h3 {
+      margin-bottom: 10px;
+      color: var(--primary-dark);
+    }
+
+    .receta p {
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .receta-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 15px;
+    }
+
+    .categoria-tag {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
+
+    .receta-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .tiempo {
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    .btn {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #429644;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      .recetas-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      
+      .header-container {
+        flex-direction: column;
+      }
+      
+      nav a {
+        margin: 5px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <h1>Recetas en Casa</h1>
+      <nav>
+        <a href="home.html">Inicio</a>
+        <a href="misRecetas.html" class="active">Mis Recetas</a>
+        <a href="#">Favoritos</a>
+        <a href="index.html">Salir</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="contenido">
+    <div class="page-header">
+      <h2>Mis Recetas</h2>
+      <p>Todas las recetas que has creado y compartido</p>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="stats-container" id="stats-container" style="display: none;">
+      <div class="stat-card">
+        <span class="stat-number" id="total-recetas">0</span>
+        <span class="stat-label">Recetas creadas</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="tiempo-promedio">0</span>
+        <span class="stat-label">min promedio</span>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="loading">
+      <i class="fas fa-spinner"></i>
+      <p>Cargando tus recetas...</p>
+    </div>
+
+    <!-- Sin recetas -->
+    <div id="no-recetas" class="no-recetas" style="display: none;">
+      <i class="fas fa-utensils"></i>
+      <h3>Aún no has creado ninguna receta</h3>
+      <p>¡Comienza a compartir tus deliciosas creaciones con la comunidad!</p>
+      <a href="home.html" class="btn btn-primary" style="margin-top: 1rem;">
+        <i class="fas fa-plus"></i> Crear mi primera receta
+      </a>
+    </div>
+
+    <!-- Grid de recetas -->
+    <div class="recetas-grid" id="recetas-grid" style="display: none;">
+      <!-- Las recetas se cargarán aquí dinámicamente -->
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Recetas en Casa - Todos los derechos reservados</p>
+  </footer>
+
+  <script src="config.js"></script>
+  <script>
+    const apiBaseUrl = apiConfig.apiBaseUrl;
+    
+    // Verificar sesión activa
+    const usuarioGuardado = localStorage.getItem("usuario");
+    if (!usuarioGuardado) {
+      window.location.href = "index.html";
+    }
+
+    const usuario = JSON.parse(usuarioGuardado);
+    if (!usuario.token || !usuario.email) {
+      window.location.href = "index.html";
+    }
+
+    // Verificar token válido
+    try {
+      const tokenParts = usuario.token.split('.');
+      const payload = JSON.parse(atob(tokenParts[1]));
+      const exp = payload.exp;
+      const ahora = Math.floor(Date.now() / 1000);
+
+      if (exp < ahora) {
+        alert("Sesión expirada. Iniciá sesión nuevamente.");
+        localStorage.removeItem("usuario");
+        window.location.href = "index.html";
+      }
+    } catch (e) {
+      console.error("Error al verificar token:", e);
+      window.location.href = "index.html";
+    }
+
+    // Cargar recetas del usuario
+    async function cargarMisRecetas() {
+      try {
+        console.log('Cargando recetas para:', usuario.email);
+        
+        const response = await fetch(`${apiBaseUrl}/mis-recetas?email=${encodeURIComponent(usuario.email)}`);
+        
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Respuesta del servidor:', data);
+        
+        document.getElementById('loading').style.display = 'none';
+        
+        if (data.recetas && data.recetas.length > 0) {
+          mostrarRecetas(data.recetas);
+          mostrarEstadisticas(data.recetas);
+        } else {
+          document.getElementById('no-recetas').style.display = 'block';
+        }
+        
+      } catch (error) {
+        console.error('Error al cargar recetas:', error);
+        document.getElementById('loading').style.display = 'none';
+        
+        // Mostrar mensaje de error
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'no-recetas';
+        errorDiv.innerHTML = `
+          <i class="fas fa-exclamation-triangle"></i>
+          <h3>Error al cargar las recetas</h3>
+          <p>Hubo un problema al obtener tus recetas. Intenta recargar la página.</p>
+          <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 1rem;">
+            <i class="fas fa-redo"></i> Reintentar
+          </button>
+        `;
+        document.querySelector('.contenido').appendChild(errorDiv);
+      }
+    }
+
+    function mostrarRecetas(recetas) {
+      const grid = document.getElementById('recetas-grid');
+      grid.innerHTML = '';
+      
+      recetas.forEach(receta => {
+        const recetaCard = document.createElement('div');
+        recetaCard.className = 'receta';
+        
+        // Imagen aleatoria
+        const imgClass = ['pizza', 'galletas', 'quinoa'][Math.floor(Math.random() * 3)];
+        
+        // Instrucciones cortas
+        const instruccionesCortas = receta.instrucciones 
+          ? receta.instrucciones.substring(0, 100) + '...'
+          : 'No hay instrucciones disponibles.';
+        
+        // Fecha de creación (si está disponible)
+        const fechaCreacion = receta.fecha_creacion 
+          ? new Date(receta.fecha_creacion).toLocaleDateString('es-ES')
+          : '';
+        
+        recetaCard.innerHTML = `
+          <div class="receta-img ${imgClass}"></div>
+          <div class="receta-info">
+            <h3>${receta.nombre}</h3>
+            <div class="receta-meta">
+              <span class="categoria-tag">${receta.categoria}</span>
+              ${fechaCreacion ? `<span style="font-size: 0.8rem; color: #999;">Creada: ${fechaCreacion}</span>` : ''}
+            </div>
+            <p>${instruccionesCortas}</p>
+            <div class="receta-footer">
+              <span class="tiempo">⏱️ ${receta.tiempo} minutos</span>
+              <a href="receta.html?id=${receta.RECETA}" class="btn">Ver receta</a>
+            </div>
+          </div>
+        `;
+        
+        grid.appendChild(recetaCard);
+      });
+      
+      grid.style.display = 'grid';
+    }
+
+    function mostrarEstadisticas(recetas) {
+      const totalRecetas = recetas.length;
+      const tiempoPromedio = recetas.reduce((sum, receta) => sum + (parseInt(receta.tiempo) || 0), 0) / totalRecetas;
+      
+      document.getElementById('total-recetas').textContent = totalRecetas;
+      document.getElementById('tiempo-promedio').textContent = Math.round(tiempoPromedio);
+      document.getElementById('stats-container').style.display = 'flex';
+    }
+
+    // Cargar recetas al cargar la página
+    cargarMisRecetas();
+  </script>
+
+</body>
+</html>
