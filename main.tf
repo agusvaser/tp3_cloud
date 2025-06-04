@@ -1,164 +1,86 @@
-# Configuración del proveedor AWS (puede estar en versions.tf o aquí)
-provider "aws" {
-  region = "us-east-1"
+module "s3_frontend" {
+  source      = "./modules/s3_frontend"
+  bucket_name = var.bucket_name
 }
 
-# Genera un sufijo aleatorio hexadecimal (4 caracteres)
-resource "random_id" "bucket_suffix" {
-  byte_length = 8
+module "dynamodb" {
+  source     = "./modules/dynamodb"
+  table_name = var.table_name
 }
 
-# Nombre generado del bucket S3
-locals {
-  generated_bucket_name = "bucket-recetify-${random_id.bucket_suffix.hex}"
-}
+resource "aws_lambda_function" "lambdas" {
+  for_each = var.lambda_functions
 
-# Módulo para el bucket S3 (ya creado previamente)
-module "frontend_bucket" {
-  source      = "./modules/s3_bucket"
-  bucket_name = local.generated_bucket_name
-  acl         = "public-read"
-  files = {
-    "index.html"    = "${path.module}/frontend/index.html"
-    "home.html"     = "${path.module}/frontend/home.html"
-    "receta.html"   = "${path.module}/frontend/receta.html"
-    "registro.html" = "${path.module}/frontend/registro.html"
-    "recetas.png"     = "${path.module}/frontend/recetas.png"
-    "misRecetas.html"= "${path.module}/frontend/misRecetas.html"
-    "favoritos.html"  = "${path.module}/frontend/favoritos.html"
-    "config.js"     = "${path.module}/build/config.js"
-  }
-  content_types = {
-    "index.html"    = "text/html"
-    "home.html"     = "text/html"
-    "receta.html"   = "text/html"
-    "misRecetas.html" = "text/html"
-    "registro.html" = "text/html"
-    "recetas.png"     = "recetas/png"
-    "favoritos.html"  = "text/html"
-    "config.js"     = "application/javascript"
-  }
-}
-
-
-# Módulo para la tabla DynamoDB (creado previamente)
-module "dynamodb_recetas" {
-  source            = "./modules/dynamodb_table"
-  table_name        = "TablaRecetas"
-  partition_key     = "USER"
-  sort_key          = "RECETA"
-  gsi_name          = "GSI-RECETA"
-  gsi_partition_key = "RECETA"
-  #tags = {
-   # Environment = "dev"
-   # Owner       = "recetify-team"
-  #}
-}
-
-data "aws_caller_identity" "current" {}
-
-# Módulo para las Lambdas
-module "lambdas" {
-  source = "./modules/lambda"
-
-  # ARN real del LabRole
+  function_name = each.key
+  role          = aws_iam_role.lab_role.arn
+  handler       = "lambda_function.lambda_handler"
+  runtime       = "python3.9"
+  filename      = "${path.module}/${each.value}"
+  source_code_hash = filebase64sha256("${path.module}/${each.value}")
   
-  
-lambda_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LabRole"
-  lambdas = {
-    "guardarReceta" = {
-      source_zip = "lambdas/guardarReceta/lambda_function.zip"
-      env_vars   = {}
-    },
-    "busquedaRecetas" = {
-      source_zip = "lambdas/busquedaReceta/lambda_function.zip"
-      env_vars   = {}
-    },
-    "obtenerReceta" = {
-      source_zip = "lambdas/obtenerReceta/lambda_function.zip"
-      env_vars   = {}
-    },
-    "obtenerRecetasUsuario" = {
-      source_zip = "lambdas/obtenerRecetasUsuario/lambda_function.zip"
-      env_vars = {}
-    },
-    "inicioSesionCognito" = {
-      source_zip = "lambdas/inicioSesionCognito/lambda_function.zip"
-      env_vars   = {
-        COGNITO_CLIENT_ID = module.cognito.client_id
-      }
-    },
-    "registroCognito" = {
-      source_zip = "lambdas/registroCognito/lambda_function.zip"
-      env_vars   = {
-        COGNITO_CLIENT_ID = module.cognito.client_id
-      }
-    },
-    "confirmarUsuarioCognito" = {
-      source_zip = "lambdas/confirmarUsuarioCognito/lambda_function.zip"
-      env_vars   = {
-        COGNITO_CLIENT_ID = module.cognito.client_id
-      }
-    },
-    # Favorite Lambdas
-    "addFavorite" = {
-      source_zip = "lambdas/addFavorite/lambda_function.zip"
-      env_vars   = { 
-        DYNAMODB_TABLE = "TablaRecetas"
-      }
-    },
-    "removeFavorite" = {
-      source_zip = "lambdas/removeFavorite/lambda_function.zip"
-      env_vars   = { 
-        DYNAMODB_TABLE = "TablaRecetas"
-      }
-    },
-    "getFavorites" = {
-      source_zip = "lambdas/getFavorites/lambda_function.zip"
-      env_vars   = { 
-        DYNAMODB_TABLE    = "TablaRecetas",
-        DYNAMODB_GSI_NAME = "GSI-RECETA"
-      }
+  environment {
+    variables = {
+      TABLE_NAME = module.dynamodb.table_name
     }
   }
+
+  depends_on = [module.dynamodb]
 }
 
-module "api_gateway" {
-  source      = "./modules/api_gateway"
-  api_name    = "recetify_api"
-  stage_name  = "dev"
-  region      = "us-east-1"
+data "aws_iam_role" "lab_role" {
+  name = var.lambda_role
+}
 
-  lambda_arns = {
-    guardarReceta    = module.lambdas.lambda_arns["guardarReceta"]
-    obtenerReceta    = module.lambdas.lambda_arns["obtenerReceta"]
-    busquedaRecetas  = module.lambdas.lambda_arns["busquedaRecetas"]
-    obtenerRecetasUsuario = module.lambdas.lambda_arns["obtenerRecetasUsuario"]
-    registroCognito = module.lambdas.lambda_arns["registroCognito"]
-    inicioSesionCognito = module.lambdas.lambda_arns["inicioSesionCognito"]
-    confirmarUsuarioCognito = module.lambdas.lambda_arns["confirmarUsuarioCognito"]
-    # Favorite Lambda ARNs for API Gateway
-    addFavorite      = module.lambdas.lambda_arns["addFavorite"]
-    removeFavorite   = module.lambdas.lambda_arns["removeFavorite"]
-    getFavorites     = module.lambdas.lambda_arns["getFavorites"]
+resource "aws_api_gateway_rest_api" "recetify_api" {
+  name        = "recetify_api"
+  description = "API Gateway para Recetify"
+}
+
+resource "aws_api_gateway_resource" "recursos" {
+  for_each = toset(["registro", "guardar_receta", "recetas"])
+
+  rest_api_id = aws_api_gateway_rest_api.recetify_api.id
+  parent_id   = aws_api_gateway_rest_api.recetify_api.root_resource_id
+  path_part   = each.key
+}
+
+resource "aws_api_gateway_method" "methods" {
+  for_each = {
+    "POST/registro"           = "POST"
+    "POST/guardar_receta"     = "POST"
+    "GET/recetas/busqueda"    = "GET"
+    "GET/recetas/{id}"        = "GET"
+  }
+
+  rest_api_id   = aws_api_gateway_rest_api.recetify_api.id
+  resource_id   = lookup(aws_api_gateway_resource.recursos, split("/", each.key)[1]).id
+  http_method   = each.value
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "integraciones" {
+  for_each = aws_lambda_function.lambdas
+
+  rest_api_id = aws_api_gateway_rest_api.recetify_api.id
+  resource_id = lookup(aws_api_gateway_resource.recursos, split("_", each.key)[0]).id
+  http_method = aws_api_gateway_method.methods["${split("_", each.key)[0]}/${aws_api_gateway_method.methods.*.http_method[0]}"].http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.lambdas[each.key].invoke_arn
+}
+
+resource "aws_api_gateway_stage" "recetify_stage" {
+  stage_name    = "stage_api_recetas"
+  rest_api_id   = aws_api_gateway_rest_api.recetify_api.id
+  deployment_id = aws_api_gateway_deployment.recetify_deployment.id
+
+  variables = {
+    lambda_env = "prod"
   }
 }
 
-output "api_invoke_url" {
-  # Cambiar a API HTTP invoke_url
-  value = module.api_gateway.invoke_url
+resource "aws_api_gateway_deployment" "recetify_deployment" {
+  depends_on = [aws_api_gateway_integration.integraciones]
+  rest_api_id = aws_api_gateway_rest_api.recetify_api.id
 }
 
-resource "local_file" "api_config" {
-  content = <<-EOT
-    const apiConfig = {
-      apiBaseUrl: "${module.api_gateway.invoke_url}"
-    };
-  EOT
-  filename = "${path.module}/build/config.js"
-}
-
-module "cognito" {
-  source          = "./modules/cognito"
-  user_pool_name  = "recetas-user-pool"
-}
