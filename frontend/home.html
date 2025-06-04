@@ -672,6 +672,11 @@
           <label for="recipe-instructions">Instrucciones de preparación</label>
           <textarea id="recipe-instructions" name="instrucciones" required></textarea>
         </div>
+
+        <div class="form-group">
+          <label for="recipe-image">Foto de la receta</label>
+          <input type="file" id="recipe-image" name="imagen" accept="image/*">
+        </div>
         
         <button type="submit" class="submit-recipe">Guardar Receta</button>
       </form>
@@ -839,47 +844,50 @@
     });
 
     
-    // Enviar formulario de receta (GUARDAR RECETA)
-  document.getElementById('add-recipe-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
+document.getElementById('add-recipe-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
 
-    const ingredientInputs = document.querySelectorAll('input[name="ingredientes[]"]');
-    const ingredientes = Array.from(ingredientInputs).map(input => input.value);
+  const ingredientInputs = document.querySelectorAll('input[name="ingredientes[]"]');
+  const ingredientes = Array.from(ingredientInputs).map(input => input.value);
 
-    const usuarioJSON = localStorage.getItem('usuario');
-    const usuario = JSON.parse(usuarioJSON || '{"email": "invitado@ejemplo.com", "nombre": "Invitado"}');
+  const usuarioJSON = localStorage.getItem('usuario');
+  const usuario = JSON.parse(usuarioJSON || '{"email": "invitado@ejemplo.com", "nombre": "Invitado"}');
 
-    const recetaData = {
-      nombre: document.getElementById('recipe-name').value,
-      tiempo: document.getElementById('recipe-time').value,
-      categoria: document.getElementById('recipe-category').value,
-      ingredientes: ingredientes.join(', '),
-      instrucciones: document.getElementById('recipe-instructions').value,
-      usuario_email: usuario.email
-    };
+  const formData = new FormData();
+  formData.append('nombre', document.getElementById('recipe-name').value);
+  formData.append('tiempo', document.getElementById('recipe-time').value);
+  formData.append('categoria', document.getElementById('recipe-category').value);
+  formData.append('ingredientes', ingredientes.join(', '));
+  formData.append('instrucciones', document.getElementById('recipe-instructions').value);
+  formData.append('usuario_email', usuario.email);
 
-    try {
-      const response = await fetch(`${apiBaseUrl}/guardar_receta`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(recetaData)
-      });
+  const imageInput = document.getElementById('recipe-image');
+  if (imageInput.files.length > 0) {
+    formData.append('imagen', imageInput.files[0]);
+  }
 
-      const result = await response.json();
+  try {
+    const response = await fetch(`${apiBaseUrl}/guardar_receta`, {
+      method: 'POST',
+      body: formData  // El navegador maneja los headers automáticamente
+    });
 
-      if (response.ok) {
-        alert('¡Receta guardada correctamente!');
-        modal.style.display = 'none';
-        document.getElementById('add-recipe-form').reset();
-        location.reload();
-      } else {
-        alert('Error al guardar la receta: ' + result.mensaje);
-      }
-    } catch (error) {
-      alert('Error al conectar con el servidor. Intenta más tarde.');
-      console.error(error);
+    const result = await response.json();
+
+    if (response.ok) {
+      alert('¡Receta guardada correctamente!');
+      modal.style.display = 'none';
+      document.getElementById('add-recipe-form').reset();
+      location.reload();
+    } else {
+      alert('Error al guardar la receta: ' + result.mensaje);
     }
-  });
+  } catch (error) {
+    alert('Error al conectar con el servidor. Intenta más tarde.');
+    console.error(error);
+  }
+});
+
 
   // Búsqueda de recetas (ACTUALIZADA)
   document.getElementById('btn-search').addEventListener('click', async function() {

@@ -22,7 +22,6 @@ module "frontend_bucket" {
     "index.html"    = "${path.module}/frontend/index.html"
     "home.html"     = "${path.module}/frontend/home.html"
     "receta.html"   = "${path.module}/frontend/receta.html"
-    "registro.html" = "${path.module}/frontend/registro.html"
     "recetas.png"     = "${path.module}/frontend/recetas.png"
     "misRecetas.html"= "${path.module}/frontend/misRecetas.html"
     "favoritos.html"  = "${path.module}/frontend/favoritos.html"
@@ -33,10 +32,30 @@ module "frontend_bucket" {
     "home.html"     = "text/html"
     "receta.html"   = "text/html"
     "misRecetas.html" = "text/html"
-    "registro.html" = "text/html"
     "recetas.png"     = "recetas/png"
     "favoritos.html"  = "text/html"
     "config.js"     = "application/javascript"
+  }
+}
+
+# Nombre generado del bucket S3 de imagenes
+locals {
+  generated_bucket_name_2 = "imagenes-recetas-${random_id.bucket_suffix.hex}"
+}
+
+# Módulo para el bucket S3 de imágenes
+module "imagenes_bucket" {
+  source      = "./modules/s3_bucket"
+  bucket_name = local.generated_bucket_name_2
+  acl         = "public-read"
+
+  files = {}  
+  content_types = {
+    "jpg"  = "image/jpeg"
+    "jpeg" = "image/jpeg"
+    "png"  = "image/png"
+    "gif"  = "image/gif"
+    "webp" = "image/webp"
   }
 }
 
@@ -67,8 +86,10 @@ module "lambdas" {
 lambda_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LabRole"
   lambdas = {
     "guardarReceta" = {
-      source_zip = "lambdas/guardarReceta/lambda_function.zip"
-      env_vars   = {}
+      source_zip = "lambdas/guardarReceta/lambda_function.zip"      
+      env_vars   = {
+        BUCKET_IMAGENES = module.imagenes_bucket.bucket_name
+      }
     },
     "busquedaRecetas" = {
       source_zip = "lambdas/busquedaReceta/lambda_function.zip"
@@ -162,3 +183,4 @@ module "cognito" {
   source          = "./modules/cognito"
   user_pool_name  = "recetas-user-pool"
 }
+

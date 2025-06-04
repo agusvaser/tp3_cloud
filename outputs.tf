@@ -17,3 +17,11 @@ output "dynamodb_table_arn" {
 output "lambda_arns" {
   value = module.lambdas.lambda_arns
 }
+
+output "imagenes_bucket_id" {
+  value = module.imagenes_bucket.bucket_id
+}
+
+output "bucket_name_imagenes" {
+  value = module.imagenes_bucket.bucket_name
+}
