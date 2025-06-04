@@ -1,19 +1,14 @@
-output "frontend_bucket_id" {
-  value = module.frontend_bucket.bucket_id
+output "s3_website_url" {
+  description = "URL del sitio web estático"
+  value       = module.s3_frontend.website_endpoint
 }
 
-output "frontend_bucket_arn" {
-  value = module.frontend_bucket.bucket_arn
+output "dynamodb_table_name" {
+  description = "Nombre de la tabla DynamoDB"
+  value       = module.dynamodb.table_name
 }
 
-output "dynamodb_table_id" {
-  value = module.dynamodb_recetas.table_id
-}
-
-output "dynamodb_table_arn" {
-  value = module.dynamodb_recetas.table_arn
-}
-
-output "lambda_arns" {
-  value = module.lambdas.lambda_arns
+output "api_gateway_invoke_url" {
+  description = "Invoke URL de API Gateway"
+  value       = aws_api_gateway_stage.recetify_stage.invoke_url
 }

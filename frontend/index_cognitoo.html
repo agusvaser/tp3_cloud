@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acceso - Recetas en Casa</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #fbc2eb, #a6c1ee);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    .container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      max-width: 500px;
+      text-align: center;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background-color: #ff914d;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #ff7a26;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bienvenido a Recetas en Casa</h1>
+    <p>Inicia sesión o regístrate con tu cuenta</p>
+
+    <!-- Botón de inicio de sesión -->
+    <button onclick="iniciarSesion()">
+      Iniciar Sesión
+    </button>
+
+    <!-- Botón de registro -->
+    <button onclick="registrarse()">
+      Registrarse
+    </button>
+  </div>
+
+  <script>
+    function iniciarSesion() {
+      const redirectUri = window.location.origin + window.location.pathname;
+      const loginUrl = 'https://us-east-1my1jusyoo.auth.us-east-1.amazoncognito.com/login?' +
+        'client_id=5b5lg8pvs5qud9n6o8e2cmk1sn&' +
+        'response_type=token&' +  // CAMBIADO: de 'code' a 'token'
+        'scope=email+openid+profile&' +
+        'redirect_uri=' + encodeURIComponent(redirectUri);
+      
+      window.location.href = loginUrl;
+    }
+
+    function registrarse() {
+      const redirectUri = window.location.origin + window.location.pathname;
+      const signupUrl = 'https://us-east-1my1jusyoo.auth.us-east-1.amazoncognito.com/signup?' +
+        'client_id=5b5lg8pvs5qud9n6o8e2cmk1sn&' +
+        'response_type=token&' +  // CAMBIADO: de 'code' a 'token'
+        'scope=email+openid+profile&' +
+        'redirect_uri=' + encodeURIComponent(redirectUri);
+      
+      window.location.href = signupUrl;
+    }
+
+    // Leer tokens del redirect y almacenarlos
+    window.addEventListener('load', () => {
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const idToken = params.get('id_token');
+      const accessToken = params.get('access_token');
+      const error = params.get('error');
+
+      if (error) {
+        alert('Error de autenticación: ' + error);
+        return;
+      }
+
+      if (idToken && accessToken) {
+        localStorage.setItem('id_token', idToken);
+        localStorage.setItem('access_token', accessToken);
+        
+        // Limpiar hash de la URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        window.location.href = 'home.html';
+      }
+    });
+  </script>
+</body>
+</html>
+<!-- <script>
+  // Verifica si el usuario ya está autenticado
+  window.addEventListener('load', () => {
+    const idToken = localStorage.getItem('id_token');
+    if (idToken) {
+      window.location.href = 'home.html';  // Redirige a home si ya está autenticado
+    }
+  }); -->
+
+
+
