@@ -779,18 +779,21 @@
         const recetaCard = document.createElement('div');
         recetaCard.className = 'receta';
         
-        const imgClass = ['pizza', 'galletas', 'quinoa'][Math.floor(Math.random() * 3)];
-        
+        const imagenPlaceholder = "https://www.kindpng.com/picc/m/79-798754_hoteles-y-centros-vacacionales-dish-placeholder-hd-png.png";
+        const imagenUrl = receta.imagen && receta.imagen.trim() !== ""
+          ? receta.imagen
+          : imagenPlaceholder;
+
         const instruccionesCortas = receta.instrucciones 
           ? receta.instrucciones.substring(0, 100) + '...'
           : 'No hay instrucciones disponibles.';
-        
+
         const fechaCreacion = receta.fecha_creacion 
           ? new Date(receta.fecha_creacion).toLocaleDateString('es-ES')
           : '';
-        
+
         recetaCard.innerHTML = `
-          <div class="receta-img ${imgClass}"></div>
+          <div class="receta-img" style="background-image: url('${imagenUrl}')"></div>
           <div class="my-recipe-badge">
             <i class="fas fa-crown"></i> Mi Receta
           </div>
@@ -812,6 +815,7 @@
             </div>
           </div>
         `;
+
         
         grid.appendChild(recetaCard);
       });

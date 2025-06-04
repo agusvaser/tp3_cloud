@@ -737,16 +737,12 @@
         document.getElementById('receta-categoria').textContent = receta.categoria;
         document.getElementById('receta-tiempo').textContent = receta.tiempo;
   
-        const imgClasses = {
-          'desayuno': 'url("https://images.unsplash.com/photo-1533089860892-a9b969df67af?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")',
-          'almuerzo': 'url("https://images.unsplash.com/photo-1547592180-85f173990554?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")',
-          'cena': 'url("https://images.unsplash.com/photo-1559847844-5315695dadae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")',
-          'postre': 'url("https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")',
-          'default': 'url("https://images.unsplash.com/photo-1506368249639-73a05d6f6488?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80")'
-        };
-  
-        const imgUrl = imgClasses[receta.categoria.toLowerCase()] || imgClasses.default;
-        document.getElementById('receta-imagen').style.backgroundImage = imgUrl;
+        const imagenPlaceholder = "https://www.kindpng.com/picc/m/79-798754_hoteles-y-centros-vacacionales-dish-placeholder-hd-png.png";
+        const imagenUrl = receta.imagen && receta.imagen.trim() !== "" 
+        ? receta.imagen 
+        : imagenPlaceholder;
+
+        document.getElementById('receta-imagen').style.backgroundImage = `url('${imagenUrl}')`;
   
         document.getElementById('receta-autor').innerHTML = receta.usuario_email
           ? `<i class="fas fa-user-chef"></i> Creado por: ${receta.usuario_nombre || 'Usuario'}`

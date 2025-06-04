@@ -241,10 +241,6 @@
       background-position: center;
     }
 
-    .pizza { background-image: url('https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'); }
-    .galletas { background-image: url('https://images.unsplash.com/photo-1558961363-fa8fdf82db35?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'); }
-    .quinoa { background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'); }
-
     .receta-info {
       padding: 1.5rem;
     }
@@ -929,53 +925,55 @@ document.getElementById('add-recipe-form').addEventListener('submit', async func
     }
   });
 
-    // Mostrar resultados de búsqueda
-    function displaySearchResults(recetas) {
-      const resultsContainer = document.getElementById('search-results');
-      const resultsGrid = document.getElementById('search-results-grid');
-      
-      // Limpiar resultados anteriores
-      resultsGrid.innerHTML = '';
-      
-      if (recetas.length === 0) {
-        resultsGrid.innerHTML = '<p>No se encontraron recetas que coincidan con tu búsqueda.</p>';
-        resultsContainer.style.display = 'block';
-        return;
-      }
-      
-      // Crear tarjetas para cada receta encontrada
-      recetas.forEach(receta => {
-        const recetaCard = document.createElement('div');
-        recetaCard.className = 'receta';
-        
-        // Usamos una imagen genérica de comida
-        const imgClass = ['pizza', 'galletas', 'quinoa'][Math.floor(Math.random() * 3)];
-        
-        // Limitamos la longitud del texto de instrucciones para mostrar
-        const instruccionesCortas = receta.instrucciones 
-          ? receta.instrucciones.substring(0, 100) + '...'
-          : 'No hay instrucciones disponibles.';
-        
-        recetaCard.innerHTML = `
-          <div class="receta-img ${imgClass}"></div>
-          <button class="favorite-btn" data-recipe-id="${receta.RECETA}">
-            <i class="fas fa-heart"></i>
-          </button>
-          <div class="receta-info">
-            <h3>${receta.nombre}</h3>
-            <p>${instruccionesCortas}</p>
-            <div class="receta-footer">
-              <span class="tiempo">⏱️ ${receta.tiempo} minutos</span>
-              <a href="receta.html?id=${receta.RECETA}" class="btn">Ver receta</a>
-            </div>
-          </div>
-        `;
-        
-        resultsGrid.appendChild(recetaCard);
-      });
-      
-      resultsContainer.style.display = 'block';
-    }
+  function displaySearchResults(recetas) {
+  const resultsContainer = document.getElementById('search-results');
+  const resultsGrid = document.getElementById('search-results-grid');
+  
+  // Limpiar resultados anteriores
+  resultsGrid.innerHTML = '';
+
+  if (recetas.length === 0) {
+    resultsGrid.innerHTML = '<p>No se encontraron recetas que coincidan con tu búsqueda.</p>';
+    resultsContainer.style.display = 'block';
+    return;
+  }
+
+  const imagenPlaceholder = "https://www.kindpng.com/picc/m/79-798754_hoteles-y-centros-vacacionales-dish-placeholder-hd-png.png";
+
+  // Crear tarjetas para cada receta encontrada
+  recetas.forEach(receta => {
+    const recetaCard = document.createElement('div');
+    recetaCard.className = 'receta';
+
+    // Usar imagen desde receta.imagen si está disponible, sino el placeholder
+    const imagenUrl = receta.imagen && receta.imagen.trim() !== ""
+      ? receta.imagen
+      : imagenPlaceholder;
+
+    const instruccionesCortas = receta.instrucciones 
+      ? receta.instrucciones.substring(0, 100) + '...'
+      : 'No hay instrucciones disponibles.';
+
+    recetaCard.innerHTML = `
+      <div class="receta-img" style="background-image: url('${imagenUrl}')"></div>
+      <button class="favorite-btn" data-recipe-id="${receta.RECETA}">
+        <i class="fas fa-heart"></i>
+      </button>
+      <div class="receta-info">
+        <h3>${receta.nombre}</h3>
+        <p>${instruccionesCortas}</p>
+        <div class="receta-footer">
+          <span class="tiempo">⏱️ ${receta.tiempo} minutos</span>
+          <a href="receta.html?id=${receta.RECETA}" class="btn">Ver receta</a>
+        </div>
+      </div>
+    `;
+
+    resultsGrid.appendChild(recetaCard);
+  });
+
+  resultsContainer.style.display = 'block';
+} 
 
     // Función para obtener el email del usuario
     function getUserEmail() {
