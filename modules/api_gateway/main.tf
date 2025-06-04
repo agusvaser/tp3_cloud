@@ -172,6 +172,71 @@ resource "aws_lambda_permission" "permitir_confirmar_usuario" {
   source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/*/*"
 }
 
+# ---- Agregar Favorito (POST) ----
+resource "aws_apigatewayv2_integration" "add_favorite" {
+  api_id                 = aws_apigatewayv2_api.this.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${var.lambda_arns["addFavorite"]}/invocations"
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "add_favorite" {
+  api_id    = aws_apigatewayv2_api.this.id
+  route_key = "POST /addFavorite"
+  target    = "integrations/${aws_apigatewayv2_integration.add_favorite.id}"
+}
+
+resource "aws_lambda_permission" "permitir_add_favorite" {
+  statement_id  = "AllowExecutionFromAPIGateway_AddFavorite"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_arns["addFavorite"]
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/*/*"
+}
+
+# ---- Eliminar Favorito (POST) ----
+resource "aws_apigatewayv2_integration" "remove_favorite" {
+  api_id                 = aws_apigatewayv2_api.this.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${var.lambda_arns["removeFavorite"]}/invocations"
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "remove_favorite" {
+  api_id    = aws_apigatewayv2_api.this.id
+  route_key = "POST /removeFavorite"
+  target    = "integrations/${aws_apigatewayv2_integration.remove_favorite.id}"
+}
+
+resource "aws_lambda_permission" "permitir_remove_favorite" {
+  statement_id  = "AllowExecutionFromAPIGateway_RemoveFavorite"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_arns["removeFavorite"]
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/*/*"
+}
+
+# ---- Obtener Favoritos (GET) ----
+resource "aws_apigatewayv2_integration" "get_favorites" {
+  api_id                 = aws_apigatewayv2_api.this.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${var.lambda_arns["getFavorites"]}/invocations"
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "get_favorites" {
+  api_id    = aws_apigatewayv2_api.this.id
+  route_key = "GET /getFavorites"
+  target    = "integrations/${aws_apigatewayv2_integration.get_favorites.id}"
+}
+
+resource "aws_lambda_permission" "permitir_get_favorites" {
+  statement_id  = "AllowExecutionFromAPIGateway_GetFavorites"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_arns["getFavorites"]
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/*/*"
+}
 
 #########################################
 # Stage de despliegue (auto deploy)

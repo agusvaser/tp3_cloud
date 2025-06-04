@@ -227,12 +227,12 @@
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease;
+      position: relative;
     }
 
     .receta:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.12);
     }
 
     .receta-img {
@@ -459,6 +459,40 @@
         margin: 5px 10px;
       }
     }
+
+    /* Favorite Button CSS - To be added */
+    .favorite-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 10;
+    }
+
+    .favorite-btn i {
+        color: #ff4757;
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .favorite-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .favorite-btn.active i {
+        color: #ff4757;
+    }
+    /* End of Favorite Button CSS */
   </style>
 </head>
 <body>
@@ -469,7 +503,7 @@
       <nav>
         <a href="#">Mis Datos</a>
         <a href="misRecetas.html">Mis Recetas</a>
-        <a href="#">Favoritos</a>
+        <a href="favoritos.html">Favoritos</a>
         <a href="index.html">Salir</a>
       </nav>
     </div>
@@ -548,6 +582,9 @@
       <div class="recetas-grid">
         <div class="receta">
           <div class="receta-img pizza"></div>
+          <button class="favorite-btn" onclick="toggleFavorite('1')">
+            <i class="far fa-heart"></i>
+          </button>
           <div class="receta-info">
             <h3>Pizza Casera</h3>
             <p>Masa suave, salsa de tomate natural y mucho queso. ¡Ideal para compartir!</p>
@@ -560,6 +597,9 @@
 
         <div class="receta">
           <div class="receta-img galletas"></div>
+          <button class="favorite-btn" onclick="toggleFavorite('2')">
+            <i class="far fa-heart"></i>
+          </button>
           <div class="receta-info">
             <h3>Galletitas de Avena</h3>
             <p>Sin azúcar y muy fáciles de hacer. Perfectas para el desayuno.</p>
@@ -572,6 +612,9 @@
 
         <div class="receta">
           <div class="receta-img quinoa"></div>
+          <button class="favorite-btn" onclick="toggleFavorite('3')">
+            <i class="far fa-heart"></i>
+          </button>
           <div class="receta-info">
             <h3>Ensalada de Quinoa</h3>
             <p>Liviana y nutritiva, con palta, tomate y limón.</p>
@@ -907,6 +950,9 @@
         
         recetaCard.innerHTML = `
           <div class="receta-img ${imgClass}"></div>
+          <button class="favorite-btn" data-recipe-id="${receta.RECETA}">
+            <i class="fas fa-heart"></i>
+          </button>
           <div class="receta-info">
             <h3>${receta.nombre}</h3>
             <p>${instruccionesCortas}</p>
@@ -922,6 +968,98 @@
       
       resultsContainer.style.display = 'block';
     }
+
+    // Función para obtener el email del usuario
+    function getUserEmail() {
+      const savedUser = localStorage.getItem('usuario');
+      if (!savedUser) return null;
+      const user = JSON.parse(savedUser);
+      return user.email;
+    }
+
+    // Función para manejar favoritos
+    async function toggleFavorite(recipeId) {
+      const userEmail = getUserEmail();
+      if (!userEmail) {
+        alert('Por favor, inicia sesión para gestionar tus favoritos.');
+        return;
+      }
+
+      const button = event.currentTarget;
+      const icon = button.querySelector('i');
+      const isFavorite = icon.classList.contains('fas');
+      const endpoint = isFavorite ? 'removeFavorite' : 'addFavorite';
+
+      try {
+        const response = await fetch(`${apiBaseUrl}/${endpoint}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: userEmail,
+            recipeId: recipeId
+          })
+        });
+
+        if (response.ok) {
+          // Toggle the heart icon
+          icon.classList.toggle('far');
+          icon.classList.toggle('fas');
+          
+          // Show feedback to user
+          const message = isFavorite ? 'Receta eliminada de favoritos' : 'Receta agregada a favoritos';
+          alert(message);
+        } else {
+          throw new Error('Error al gestionar favoritos');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error al gestionar favoritos. Por favor, intenta nuevamente.');
+      }
+    }
+
+    // Cargar estado inicial de favoritos
+    async function loadFavoriteStates() {
+      const userEmail = getUserEmail();
+      if (!userEmail) return;
+
+      try {
+        const response = await fetch(`${apiBaseUrl}/getFavorites`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: userEmail
+          })
+        });
+
+        if (response.ok) {
+          const favorites = await response.json();
+          const favoriteIds = favorites.map(recipe => recipe.RECETA);
+          
+          // Update all favorite buttons
+          document.querySelectorAll('.favorite-btn').forEach(button => {
+            const recipeId = button.getAttribute('data-recipe-id');
+            const icon = button.querySelector('i');
+            
+            if (favoriteIds.includes(recipeId)) {
+              icon.classList.remove('far');
+              icon.classList.add('fas');
+            } else {
+              icon.classList.remove('fas');
+              icon.classList.add('far');
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error al cargar favoritos:', error);
+      }
+    }
+
+    // Cargar estado de favoritos cuando la página se carga
+    document.addEventListener('DOMContentLoaded', loadFavoriteStates);
   </script>
 
 </body>

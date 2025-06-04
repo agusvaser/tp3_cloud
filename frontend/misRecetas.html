@@ -11,6 +11,8 @@
       --primary-color: #ff914d;
       --primary-dark: #ff7a26;
       --accent-color: #4cb050;
+      --gold-color: #f39c12;
+      --gold-dark: #e67e22;
       --text-color: #333;
       --light-gray: #f5f5f5;
       --white: #ffffff;
@@ -76,59 +78,161 @@
       padding: 2rem 5%;
     }
 
-    .page-header {
+    /* Banner hero para mis recetas con toque dorado */
+    .my-recipes-banner {
+      background: linear-gradient(rgba(255, 145, 77, 0.8), rgba(243, 156, 18, 0.8)), url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80');
+      background-size: cover;
+      background-position: center;
+      color: white;
       text-align: center;
+      padding: 4rem 2rem;
       margin-bottom: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
     }
 
-    .page-header h2 {
-      font-size: 2.2rem;
-      color: var(--primary-dark);
-      margin-bottom: 0.5rem;
+    .my-recipes-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(243, 156, 18, 0.3) 0%, transparent 50%);
     }
 
-    .page-header p {
-      font-size: 1.1rem;
-      color: #666;
+    .my-recipes-banner .content {
+      position: relative;
+      z-index: 2;
     }
 
+    .my-recipes-banner h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .my-recipes-banner p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .my-recipes-banner .chef-icons {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .chef-icons i {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .chef-icons i:nth-child(2) {
+      animation-delay: 0.5s;
+    }
+
+    .chef-icons i:nth-child(3) {
+      animation-delay: 1s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Estadísticas con toque dorado */
     .stats-container {
       display: flex;
       justify-content: center;
       gap: 2rem;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
     }
 
     .stat-card {
-      background-color: var(--white);
-      padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      background: linear-gradient(135deg, var(--white), #fef9e7);
+      padding: 2rem 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(243, 156, 18, 0.1);
       text-align: center;
-      min-width: 150px;
+      min-width: 180px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid transparent;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--gold-color));
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(45deg, var(--gold-color), var(--gold-dark));
+      border-radius: 50%;
+      opacity: 0.1;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 12px 35px rgba(243, 156, 18, 0.2);
+      border-color: var(--gold-color);
     }
 
     .stat-number {
-      font-size: 2rem;
+      font-size: 2.5rem;
       font-weight: 700;
-      color: var(--primary-color);
+      background: linear-gradient(45deg, var(--primary-color), var(--gold-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       display: block;
+      margin-bottom: 0.5rem;
     }
 
     .stat-label {
       color: #666;
-      font-size: 0.9rem;
+      font-size: 1rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .loading {
+    /* Estados de carga y sin recetas */
+    .loading, .no-recetas {
+      background: linear-gradient(135deg, var(--white), #fef9e7);
+      padding: 4rem 2rem;
+      border-radius: 12px;
       text-align: center;
-      padding: 3rem;
+      box-shadow: 0 6px 15px rgba(243, 156, 18, 0.08);
+      margin: 2rem 0;
+      border: 1px solid rgba(243, 156, 18, 0.1);
     }
 
     .loading i {
-      font-size: 2rem;
-      color: var(--primary-color);
+      font-size: 3rem;
+      background: linear-gradient(45deg, var(--primary-color), var(--gold-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
     }
 
     @keyframes spin {
@@ -136,48 +240,120 @@
       100% { transform: rotate(360deg); }
     }
 
-    .no-recetas {
-      text-align: center;
-      padding: 3rem;
-      background-color: var(--white);
-      border-radius: 12px;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-    }
-
     .no-recetas i {
       font-size: 4rem;
-      color: #ddd;
+      background: linear-gradient(45deg, var(--gold-color), var(--gold-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 1rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
     }
 
     .no-recetas h3 {
-      color: var(--primary-dark);
+      font-size: 1.8rem;
       margin-bottom: 1rem;
+      color: var(--text-color);
     }
 
+    .no-recetas p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    .loading p {
+      font-size: 1.2rem;
+      color: var(--text-color);
+      margin-top: 1rem;
+    }
+
+    /* Grid de recetas con efectos dorados */
     .recetas-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 25px;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
     }
 
     .receta {
       background-color: var(--white);
-      border-radius: 12px;
+      border-radius: 15px;
       overflow: hidden;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      transform: translateY(0);
+      border: 2px solid transparent;
     }
 
     .receta:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(243, 156, 18, 0.15);
+      border-color: var(--gold-color);
     }
 
+    .receta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--gold-color));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .receta:hover::before {
+      opacity: 1;
+    }
+
+    /* Badge de "Mi Receta" */
+    .my-recipe-badge {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: linear-gradient(45deg, var(--gold-color), var(--gold-dark));
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 5;
+      box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+    }
+
+    /* Imágenes de recetas */
     .receta-img {
-      height: 180px;
+      height: 220px;
       background-size: cover;
       background-position: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .receta-img::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, transparent 0%, rgba(243, 156, 18, 0.1) 100%);
+      transition: opacity 0.3s ease;
+    }
+
+    .receta:hover .receta-img::after {
+      opacity: 0.7;
     }
 
     .pizza { background-image: url('https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'); }
@@ -185,102 +361,272 @@
     .quinoa { background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'); }
 
     .receta-info {
-      padding: 1.5rem;
+      padding: 1.8rem;
     }
 
     .receta h3 {
-      margin-bottom: 10px;
-      color: var(--primary-dark);
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      font-size: 1.3rem;
+      font-weight: 600;
     }
 
     .receta p {
       color: #666;
-      margin-bottom: 15px;
+      margin-bottom: 1.2rem;
+      line-height: 1.6;
+      font-size: 0.95rem;
     }
 
     .receta-meta {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 1rem;
-      margin-bottom: 15px;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
     }
 
     .categoria-tag {
-      background-color: var(--primary-color);
+      background: linear-gradient(135deg, var(--primary-color), var(--gold-color));
       color: white;
-      padding: 4px 8px;
-      border-radius: 12px;
+      padding: 6px 12px;
+      border-radius: 20px;
       font-size: 0.8rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+    }
+
+    .fecha-creacion {
+      font-size: 0.8rem;
+      color: #999;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
     }
 
     .receta-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-top: 15px;
+      padding-top: 1rem;
       border-top: 1px solid #eee;
     }
 
     .tiempo {
       font-size: 0.9rem;
       color: #777;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
+    .tiempo i {
+      color: var(--gold-color);
+    }
+
+    /* Botón de favorito */
+    .favorite-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 10;
+    }
+
+    .favorite-btn i {
+      color: #ff4757;
+      font-size: 1.3rem;
+      transition: all 0.3s ease;
+    }
+
+    .favorite-btn:hover {
+      transform: scale(1.15);
+      background: white;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
+    .favorite-btn:hover i {
+      transform: scale(1.1);
+    }
+
+    .favorite-btn.active i {
+      color: #ff4757;
+    }
+
+    /* Botones */
     .btn {
-      background-color: var(--accent-color);
+      background: linear-gradient(135deg, var(--primary-color), var(--gold-color));
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      box-shadow: 0 4px 12px rgba(255, 145, 77, 0.3);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgba(255, 145, 77, 0.4);
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: white;
+      text-align: center;
+      padding: 2.5rem;
+      margin-top: 4rem;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+    }
+
+    footer p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      nav a {
+        margin: 0;
+      }
+
+      .my-recipes-banner {
+        padding: 3rem 1rem;
+      }
+
+      .my-recipes-banner h2 {
+        font-size: 2rem;
+      }
+
+      .my-recipes-banner p {
+        font-size: 1rem;
+      }
+
+      .chef-icons {
+        font-size: 2rem !important;
+      }
+
+      .stats-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .stat-card {
+        min-width: 250px;
+      }
+
+      .recetas-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .contenido {
+        padding: 1rem 3%;
+      }
+
+      .receta-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+    }
+
+    /* Animaciones de entrada */
+    .receta {
+      animation: fadeInUp 0.6s ease forwards;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .receta:nth-child(1) { animation-delay: 0.1s; }
+    .receta:nth-child(2) { animation-delay: 0.2s; }
+    .receta:nth-child(3) { animation-delay: 0.3s; }
+    .receta:nth-child(4) { animation-delay: 0.4s; }
+    .receta:nth-child(5) { animation-delay: 0.5s; }
+    .receta:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stat-card {
+      animation: fadeInUp 0.6s ease forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .stat-card:nth-child(1) { animation-delay: 0.2s; }
+    .stat-card:nth-child(2) { animation-delay: 0.4s; }
+
+    .btn-ver-receta {
+      background: linear-gradient(135deg, var(--accent-color), #45a049);
       color: white;
       padding: 8px 16px;
       border-radius: 20px;
       text-decoration: none;
       font-size: 0.9rem;
       font-weight: 500;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(76, 176, 80, 0.3);
     }
 
-    .btn:hover {
-      background-color: #429644;
+    .btn-ver-receta:hover {
+      background: linear-gradient(135deg, #45a049, var(--accent-color));
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 176, 80, 0.4);
     }
 
-    .btn-primary {
-      background-color: var(--primary-color);
-    }
-
-    .btn-primary:hover {
-      background-color: var(--primary-dark);
-    }
-
-    footer {
-      background-color: #333;
-      color: white;
-      text-align: center;
-      padding: 2rem;
-      margin-top: 3rem;
-    }
-
-    @media (max-width: 768px) {
-      .recetas-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .stats-container {
-        flex-direction: column;
-        align-items: center;
-      }
-      
-      nav {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 10px;
-      }
-      
-      .header-container {
-        flex-direction: column;
-      }
-      
-      nav a {
-        margin: 5px 10px;
-      }
+    .btn-ver-receta i {
+      font-size: 0.8rem;
     }
   </style>
 </head>
@@ -292,16 +638,24 @@
       <nav>
         <a href="home.html">Inicio</a>
         <a href="misRecetas.html" class="active">Mis Recetas</a>
-        <a href="#">Favoritos</a>
+        <a href="favoritos.html">Favoritos</a>
         <a href="index.html">Salir</a>
       </nav>
     </div>
   </header>
 
   <div class="contenido">
-    <div class="page-header">
-      <h2>Mis Recetas</h2>
-      <p>Todas las recetas que has creado y compartido</p>
+    <!-- Banner hero para mis recetas -->
+    <div class="my-recipes-banner">
+      <div class="content">
+        <div class="chef-icons">
+          <i class="fas fa-utensils"></i>
+          <i class="fas fa-chef-hat"></i>
+          <i class="fas fa-fire"></i>
+        </div>
+        <h2>Mis Creaciones Culinarias</h2>
+        <p>Todas las deliciosas recetas que has creado y compartido con amor</p>
+      </div>
     </div>
 
     <!-- Estadísticas -->
@@ -327,7 +681,7 @@
       <i class="fas fa-utensils"></i>
       <h3>Aún no has creado ninguna receta</h3>
       <p>¡Comienza a compartir tus deliciosas creaciones con la comunidad!</p>
-      <a href="home.html" class="btn btn-primary" style="margin-top: 1rem;">
+      <a href="home.html" class="btn btn-primary">
         <i class="fas fa-plus"></i> Crear mi primera receta
       </a>
     </div>
@@ -421,34 +775,40 @@
       grid.innerHTML = '';
       
       recetas.forEach(receta => {
+        console.log('Mostrando receta en misRecetas.html:', receta.nombre, 'RECETA ID:', receta.RECETA, 'Type:', typeof receta.RECETA);
         const recetaCard = document.createElement('div');
         recetaCard.className = 'receta';
         
-        // Imagen aleatoria
         const imgClass = ['pizza', 'galletas', 'quinoa'][Math.floor(Math.random() * 3)];
         
-        // Instrucciones cortas
         const instruccionesCortas = receta.instrucciones 
           ? receta.instrucciones.substring(0, 100) + '...'
           : 'No hay instrucciones disponibles.';
         
-        // Fecha de creación (si está disponible)
         const fechaCreacion = receta.fecha_creacion 
           ? new Date(receta.fecha_creacion).toLocaleDateString('es-ES')
           : '';
         
         recetaCard.innerHTML = `
           <div class="receta-img ${imgClass}"></div>
+          <div class="my-recipe-badge">
+            <i class="fas fa-crown"></i> Mi Receta
+          </div>
+          <button class="favorite-btn" onclick="toggleFavorite(event, '${receta.RECETA}')">
+            <i class="far fa-heart"></i>
+          </button>
           <div class="receta-info">
             <h3>${receta.nombre}</h3>
             <div class="receta-meta">
               <span class="categoria-tag">${receta.categoria}</span>
-              ${fechaCreacion ? `<span style="font-size: 0.8rem; color: #999;">Creada: ${fechaCreacion}</span>` : ''}
+              ${fechaCreacion ? `<span class="fecha-creacion"><i class="fas fa-calendar-alt"></i> ${fechaCreacion}</span>` : ''}
             </div>
             <p>${instruccionesCortas}</p>
             <div class="receta-footer">
-              <span class="tiempo">⏱️ ${receta.tiempo} minutos</span>
-              <a href="receta.html?id=${receta.RECETA}" class="btn">Ver receta</a>
+              <span class="tiempo"><i class="fas fa-clock"></i> ${receta.tiempo} minutos</span>
+              <a href="receta.html?id=${receta.RECETA}" class="btn-ver-receta">
+                <i class="fas fa-eye"></i> Ver receta
+              </a>
             </div>
           </div>
         `;
@@ -457,6 +817,7 @@
       });
       
       grid.style.display = 'grid';
+      loadFavoriteStates();
     }
 
     function mostrarEstadisticas(recetas) {
@@ -470,6 +831,126 @@
 
     // Cargar recetas al cargar la página
     cargarMisRecetas();
+
+    // Función para obtener el email del usuario
+    function getUserEmail() {
+        const savedUser = localStorage.getItem('usuario');
+        if (!savedUser) return null;
+        const user = JSON.parse(savedUser);
+        return user.email;
+    }
+
+    // Función para manejar favoritos
+    async function toggleFavorite(event, recipeId) {
+        console.log('toggleFavorite in misRecetas.html - recipeId:', recipeId, 'Type:', typeof recipeId);
+        
+        // Validación estricta del recipeId
+        if (!recipeId || recipeId === "undefined" || recipeId === null) {
+            console.error('toggleFavorite: recipeId es inválido:', recipeId);
+            alert('Error: No se puede gestionar el favorito debido a un ID de receta inválido.');
+            return;
+        }
+
+        const userEmail = getUserEmail();
+        if (!userEmail) {
+            alert('Por favor, inicia sesión para gestionar tus favoritos.');
+            return;
+        }
+
+        const button = event.currentTarget;
+        const icon = button.querySelector('i');
+        const isFavorite = icon.classList.contains('fas');
+        const endpoint = isFavorite ? '/removeFavorite' : '/addFavorite';
+        const actionText = isFavorite ? 'eliminar de' : 'agregar a';
+
+        try {
+            const response = await fetch(`${apiConfig.apiBaseUrl}${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_email: userEmail,
+                    recipe_id: recipeId
+                })
+            });
+
+            if (response.ok) {
+                icon.classList.toggle('far');
+                icon.classList.toggle('fas');
+                // No alert en caso de éxito
+                // const message = isFavorite ? 'Receta eliminada de favoritos' : 'Receta agregada a favoritos';
+                // alert(message); 
+            } else {
+                let errorDetails = `Error al ${actionText} favoritos.`;
+                try {
+                    const errorData = await response.json();
+                    errorDetails = errorData.message || JSON.stringify(errorData);
+                } catch (e) {
+                    // Si la respuesta no es JSON, usa el texto o el estado
+                    errorDetails = await response.text() || response.statusText || 'Error desconocido del servidor.';
+                }
+                console.error(`Error al ${actionText} favoritos:`, response.status, errorDetails);
+                alert(`Error al ${actionText} favoritos: ${errorDetails}`);
+            }
+        } catch (error) {
+            console.error(`Error de red al ${actionText} favoritos:`, error);
+            alert(`Error de red al ${actionText} favoritos. Por favor, intenta nuevamente.`);
+        }
+    }
+
+    // Cargar estado inicial de favoritos
+    async function loadFavoriteStates() {
+        const userEmail = getUserEmail();
+        if (!userEmail) return;
+
+        try {
+            const response = await fetch(`${apiConfig.apiBaseUrl}/getFavorites?user_email=${encodeURIComponent(userEmail)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const favorites = data.favorites || [];
+                const favoriteIds = favorites.map(recipe => recipe.originalRecipeId);
+                
+                document.querySelectorAll('.favorite-btn').forEach(button => {
+                    const onclickAttr = button.getAttribute('onclick');
+                    if (onclickAttr) {
+                        const match = onclickAttr.match(/toggleFavorite\(event, '([^']*)'\)/);
+                        if (match && match[1]) {
+                            const recipeIdFromButton = match[1];
+                            console.log('loadFavoriteStates in misRecetas.html - recipeIdFromButton:', recipeIdFromButton, 'Type:', typeof recipeIdFromButton);
+                            const icon = button.querySelector('i');
+                            
+                            if (favoriteIds.includes(recipeIdFromButton)) {
+                                icon.classList.remove('far');
+                                icon.classList.add('fas');
+                            } else {
+                                icon.classList.remove('fas');
+                                icon.classList.add('far');
+                            }
+                        } else {
+                            console.warn('loadFavoriteStates: Could not extract recipeId from button', button);
+                        }
+                    }
+                });
+            } else {
+                console.error('Error fetching favorite states:', response.status, await response.text());
+            }
+        } catch (error) {
+            console.error('Error al cargar estados de favoritos:', error);
+        }
+    }
+
+    // Cargar estado de favoritos cuando la página se carga
+    document.addEventListener('DOMContentLoaded', () => {
+        cargarMisRecetas();
+        loadFavoriteStates();
+    });
   </script>
 
 </body>

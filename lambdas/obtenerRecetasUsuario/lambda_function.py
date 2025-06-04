@@ -55,11 +55,12 @@ def lambda_handler(event, context):
         # Filtrar solo las recetas (excluir el perfil del usuario)
         recetas_usuario = []
         for item in items:
-            # Solo incluir items que tengan RECETA y no sean el perfil
-            if item.get('RECETA') and item.get('RECETA') != 'PROFILE':
+            # Solo incluir items que tengan RECETA, no sean el perfil y no sean un marcador de favorito
+            recipe_id = item.get('RECETA')
+            if recipe_id and recipe_id != 'PROFILE' and not recipe_id.startswith('FAVORITE#'):
                 recetas_usuario.append(item)
 
-        print(f"Recetas del usuario (sin perfil): {len(recetas_usuario)}")
+        print(f"Recetas del usuario (sin perfil y sin favoritos duplicados): {len(recetas_usuario)}")
 
         # Convertir Decimal a tipos JSON serializables
         def convert_decimals(obj):

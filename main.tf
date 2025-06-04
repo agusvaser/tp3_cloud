@@ -25,6 +25,7 @@ module "frontend_bucket" {
     "registro.html" = "${path.module}/frontend/registro.html"
     "recetas.png"     = "${path.module}/frontend/recetas.png"
     "misRecetas.html"= "${path.module}/frontend/misRecetas.html"
+    "favoritos.html"  = "${path.module}/frontend/favoritos.html"
     "config.js"     = "${path.module}/build/config.js"
   }
   content_types = {
@@ -34,6 +35,7 @@ module "frontend_bucket" {
     "misRecetas.html" = "text/html"
     "registro.html" = "text/html"
     "recetas.png"     = "recetas/png"
+    "favoritos.html"  = "text/html"
     "config.js"     = "application/javascript"
   }
 }
@@ -97,6 +99,26 @@ lambda_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:r
       env_vars   = {
         COGNITO_CLIENT_ID = module.cognito.client_id
       }
+    },
+    # Favorite Lambdas
+    "addFavorite" = {
+      source_zip = "lambdas/addFavorite/lambda_function.zip"
+      env_vars   = { 
+        DYNAMODB_TABLE = "TablaRecetas"
+      }
+    },
+    "removeFavorite" = {
+      source_zip = "lambdas/removeFavorite/lambda_function.zip"
+      env_vars   = { 
+        DYNAMODB_TABLE = "TablaRecetas"
+      }
+    },
+    "getFavorites" = {
+      source_zip = "lambdas/getFavorites/lambda_function.zip"
+      env_vars   = { 
+        DYNAMODB_TABLE    = "TablaRecetas",
+        DYNAMODB_GSI_NAME = "GSI-RECETA"
+      }
     }
   }
 }
@@ -115,6 +137,10 @@ module "api_gateway" {
     registroCognito = module.lambdas.lambda_arns["registroCognito"]
     inicioSesionCognito = module.lambdas.lambda_arns["inicioSesionCognito"]
     confirmarUsuarioCognito = module.lambdas.lambda_arns["confirmarUsuarioCognito"]
+    # Favorite Lambda ARNs for API Gateway
+    addFavorite      = module.lambdas.lambda_arns["addFavorite"]
+    removeFavorite   = module.lambdas.lambda_arns["removeFavorite"]
+    getFavorites     = module.lambdas.lambda_arns["getFavorites"]
   }
 }
 
