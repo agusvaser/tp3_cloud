@@ -1,0 +1,5 @@
+iam_role_name = "Labrole"
+region = "us-east-1"
+#index_document="index.html"
+#error_document = "error.html"
+#user_pool_name = "recetas-user-pool"
