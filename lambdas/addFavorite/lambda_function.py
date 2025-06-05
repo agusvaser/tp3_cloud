@@ -57,8 +57,8 @@ def lambda_handler(event, context):
         timestamp = datetime.datetime.utcnow().isoformat() + "Z"
 
         item_to_put = {
-            'USER': user_email,               # Partition Key
-            'RECETA': favorite_item_sk,       # Sort Key
+            'USER': user_email,             
+            'RECETA': favorite_item_sk,       
             'originalRecipeId': recipe_id,
             'favoritedAt': timestamp
         }
