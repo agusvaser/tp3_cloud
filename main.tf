@@ -13,6 +13,17 @@ locals {
   generated_bucket_name = "bucket-recetify-${random_id.bucket_suffix.hex}"
 }
 
+# Módulo VPC
+module "vpc" {
+  source = "./modules/vpc"
+  
+  name_prefix        = "recetify"
+  vpc_cidr          = "10.0.0.0/16"
+  private_subnets   = ["10.0.1.0/24", "10.0.2.0/24"]
+  availability_zones = ["us-east-1a", "us-east-1b"]
+  region            = "us-east-1"
+}
+
 # Módulo para el bucket S3 (ya creado previamente)
 module "frontend_bucket" {
   source      = "./modules/s3_bucket"
@@ -100,64 +111,80 @@ module "lambdas" {
   source = "./modules/lambda"
 
   # ARN real del LabRole
+  lambda_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LabRole"
   
+  # Configuración VPC para las Lambdas que la necesiten
+  vpc_config = {
+    subnet_ids         = module.vpc.private_subnet_ids
+    security_group_ids = [module.vpc.lambda_security_group_id]
+  }
   
-lambda_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LabRole"
   lambdas = {
     "guardarReceta" = {
       source_zip = "lambdas/guardarReceta/lambda_function.zip"
       env_vars   = {
         BUCKET_IMAGENES = module.user_photos_bucket.s3_bucket_id
       }
+      use_vpc = true  # Necesita VPC para acceder a DynamoDB
     },
     "busquedaRecetas" = {
       source_zip = "lambdas/busquedaReceta/lambda_function.zip"
       env_vars   = {}
+      use_vpc = true  # Necesita VPC para acceder a DynamoDB
     },
     "obtenerReceta" = {
       source_zip = "lambdas/obtenerReceta/lambda_function.zip"
       env_vars   = {}
+      use_vpc = true  # Necesita VPC para acceder a DynamoDB
     },
     "obtenerRecetasUsuario" = {
       source_zip = "lambdas/obtenerRecetasUsuario/lambda_function.zip"
       env_vars = {}
+      use_vpc = true  # Necesita VPC para acceder a DynamoDB
     },
+    # Lambdas de Cognito - SIN VPC
     "inicioSesionCognito" = {
       source_zip = "lambdas/inicioSesionCognito/lambda_function.zip"
       env_vars   = {
         COGNITO_CLIENT_ID = module.cognito.client_id
       }
+      use_vpc = false  # Cognito funciona mejor sin VPC
     },
     "registroCognito" = {
       source_zip = "lambdas/registroCognito/lambda_function.zip"
       env_vars   = {
         COGNITO_CLIENT_ID = module.cognito.client_id
       }
+      use_vpc = false  # Cognito funciona mejor sin VPC
     },
     "confirmarUsuarioCognito" = {
       source_zip = "lambdas/confirmarUsuarioCognito/lambda_function.zip"
       env_vars   = {
         COGNITO_CLIENT_ID = module.cognito.client_id
       }
+      use_vpc = false  # Cognito funciona mejor sin VPC
     },
     "logoutCognito" = {
       source_zip = "lambdas/logoutCognito/lambda_function.zip"
       env_vars   = {
         COGNITO_CLIENT_ID = module.cognito.client_id
       }
+      use_vpc = false  # Cognito funciona mejor sin VPC
     },
-    # Favorite Lambdas
+    # Favorite Lambdas - CON VPC
     "addFavorite" = {
       source_zip = "lambdas/addFavorite/lambda_function.zip"
       env_vars   = { 
         DYNAMODB_TABLE = "TablaRecetas"
       }
+      use_vpc = true  # Necesita VPC para acceder a DynamoDB
     },
     "removeFavorite" = {
       source_zip = "lambdas/removeFavorite/lambda_function.zip"
       env_vars   = { 
         DYNAMODB_TABLE = "TablaRecetas"
       }
+      use_vpc = true  # Necesita VPC para acceder a DynamoDB
     },
     "getFavorites" = {
       source_zip = "lambdas/getFavorites/lambda_function.zip"
@@ -165,6 +192,7 @@ lambda_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:r
         DYNAMODB_TABLE    = "TablaRecetas",
         DYNAMODB_GSI_NAME = "GSI-RECETA"
       }
+      use_vpc = true  # Necesita VPC para acceder a DynamoDB
     }
   }
 }

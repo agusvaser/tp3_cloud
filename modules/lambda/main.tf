@@ -24,6 +24,21 @@ resource "aws_lambda_function" "this" {
     variables = each.value.env_vars
   }
 
+  # Configuración VPC (condicional por función)
+  dynamic "vpc_config" {
+    for_each = (var.vpc_config != null && each.value.use_vpc) ? [var.vpc_config] : []
+    content {
+      subnet_ids         = vpc_config.value.subnet_ids
+      security_group_ids = vpc_config.value.security_group_ids
+    }
+  }
+
   # Timeout de ejecución en segundos
-  # timeout = 10
+  timeout = 30
+
+  tags = {
+    Name = each.key
+    Type = "Lambda"
+    VPC  = each.value.use_vpc ? "true" : "false"
+  }
 }
