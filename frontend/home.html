@@ -195,18 +195,24 @@
       background-color: #429644;
     }
 
-    .destacadas {
+    /* Estilos para Tips de Cocina */
+    .tips-cocina {
       margin-top: 2rem;
+      background-color: var(--white);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
     }
 
-    .destacadas h2 {
+    .tips-cocina h2 {
       margin-bottom: 1.5rem;
       position: relative;
       display: inline-block;
       padding-bottom: 8px;
+      color: var(--primary-dark);
     }
 
-    .destacadas h2::after {
+    .tips-cocina h2::after {
       content: '';
       position: absolute;
       width: 60%;
@@ -216,71 +222,69 @@
       left: 0;
     }
 
-    .recetas-grid {
+    .tips-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 25px;
     }
 
-    .receta {
-      background-color: var(--white);
+    .tip-card {
+      background: linear-gradient(135deg, #fff, #f8f9fa);
       border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-      transition: transform 0.3s ease;
-      position: relative;
-    }
-
-    .receta:hover {
-      transform: translateY(-5px);
-    }
-
-    .receta-img {
-      height: 180px;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .receta-info {
       padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-left: 4px solid var(--accent-color);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    .receta h3 {
-      margin-bottom: 10px;
+    .tip-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 60px;
+      height: 60px;
+      background: var(--accent-color);
+      opacity: 0.1;
+      border-radius: 50%;
+      transform: translate(20px, -20px);
+    }
+
+    .tip-card:hover {
+      transform: translateY(-5px);
+      border-left-color: var(--primary-color);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+
+    .tip-card h3 {
       color: var(--primary-dark);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
     }
 
-    .receta p {
+    .tip-card p {
       color: #666;
-      margin-bottom: 15px;
+      line-height: 1.6;
+      margin-bottom: 1rem;
     }
 
-    .receta-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 15px;
-      border-top: 1px solid #eee;
-    }
-
-    .tiempo {
-      font-size: 0.9rem;
-      color: #777;
-    }
-
-    .btn {
+    .tip-category {
+      display: inline-block;
       background-color: var(--accent-color);
       color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      text-decoration: none;
-      font-size: 0.9rem;
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-size: 0.8rem;
       font-weight: 500;
-      transition: background-color 0.3s;
     }
 
-    .btn:hover {
-      background-color: #429644;
+    .tip-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
     }
 
     /* Modal para agregar receta */
@@ -398,6 +402,73 @@
       display: none;
     }
 
+    .recetas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .receta {
+      background-color: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+
+    .receta:hover {
+      transform: translateY(-5px);
+    }
+
+    .receta-img {
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .receta-info {
+      padding: 1.5rem;
+    }
+
+    .receta h3 {
+      margin-bottom: 10px;
+      color: var(--primary-dark);
+    }
+
+    .receta p {
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .receta-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .tiempo {
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    .btn {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #429644;
+    }
+
     /* Estilos para las etiquetas de ingredientes */
     .search-ingredients-list {
       display: flex;
@@ -436,6 +507,10 @@
     }
 
     @media (max-width: 768px) {
+      .tips-grid {
+        grid-template-columns: 1fr;
+      }
+      
       .recetas-grid {
         grid-template-columns: 1fr;
       }
@@ -456,7 +531,7 @@
       }
     }
 
-    /* Favorite Button CSS - To be added */
+    /* Favorite Button CSS */
     .favorite-btn {
         position: absolute;
         top: 1rem;
@@ -488,7 +563,6 @@
     .favorite-btn.active i {
         color: #ff4757;
     }
-    /* End of Favorite Button CSS */
   </style>
 </head>
 <body>
@@ -497,7 +571,6 @@
     <div class="header-container">
       <h1>Recetas en Casa</h1>
       <nav>
-        <a href="#">Mis Datos</a>
         <a href="misRecetas.html">Mis Recetas</a>
         <a href="favoritos.html">Favoritos</a>
         <a href="index.html">Salir</a>
@@ -572,54 +645,52 @@
       </div>
     </div>
 
-    <div class="destacadas">
-      <h2>Recetas Destacadas</h2>
-      
-      <div class="recetas-grid">
-        <div class="receta">
-          <div class="receta-img pizza"></div>
-          <button class="favorite-btn" onclick="toggleFavorite('1')">
-            <i class="far fa-heart"></i>
-          </button>
-          <div class="receta-info">
-            <h3>Pizza Casera</h3>
-            <p>Masa suave, salsa de tomate natural y mucho queso. ¡Ideal para compartir!</p>
-            <div class="receta-footer">
-              <span class="tiempo">⏱️ 45 minutos</span>
-              <a href="receta.html?id=1" class="btn">Ver receta</a>
-            </div>
-          </div>
+    <!-- Sección de Tips de Cocina -->
+    <div class="tips-cocina">
+      <h2>💡 Tips de Cocina</h2>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <span class="tip-icon">🔥</span>
+          <h3>Control de Temperatura</h3>
+          <p>Para obtener una carne perfecta, dejala que alcance temperatura ambiente antes de cocinar. Esto garantiza una cocción uniforme y evita que se endurezca.</p>
+          <span class="tip-category">Carnes</span>
         </div>
 
-        <div class="receta">
-          <div class="receta-img galletas"></div>
-          <button class="favorite-btn" onclick="toggleFavorite('2')">
-            <i class="far fa-heart"></i>
-          </button>
-          <div class="receta-info">
-            <h3>Galletitas de Avena</h3>
-            <p>Sin azúcar y muy fáciles de hacer. Perfectas para el desayuno.</p>
-            <div class="receta-footer">
-              <span class="tiempo">⏱️ 30 minutos</span>
-              <a href="receta.html?id=2" class="btn">Ver receta</a>
-            </div>
-          </div>
+        <div class="tip-card">
+          <span class="tip-icon">🧂</span>
+          <h3>Sal en el momento justo</h3>
+          <p>Sazoná las verduras al final de la cocción para mantener su textura crujiente y evitar que suelten agua. La sal extrae humedad si se agrega muy temprano.</p>
+          <span class="tip-category">Verduras</span>
         </div>
 
-        <div class="receta">
-          <div class="receta-img quinoa"></div>
-          <button class="favorite-btn" onclick="toggleFavorite('3')">
-            <i class="far fa-heart"></i>
-          </button>
-          <div class="receta-info">
-            <h3>Ensalada de Quinoa</h3>
-            <p>Liviana y nutritiva, con palta, tomate y limón.</p>
-            <div class="receta-footer">
-              <span class="tiempo">⏱️ 20 minutos</span>
-              <a href="receta.html?id=3" class="btn">Ver receta</a>
-            </div>
-          </div>
+        <div class="tip-card">
+          <span class="tip-icon">🥄</span>
+          <h3>Medidas perfectas</h3>
+          <p>Una cucharadita de sal equivale a 5g. Para medir miel o aceite, untá la cuchara con aceite primero y se deslizará sin problemas.</p>
+          <span class="tip-category">Medidas</span>
         </div>
+
+        <div class="tip-card">
+          <span class="tip-icon">🍳</span>
+          <h3>Sartén perfecta</h3>
+          <p>Precalentá siempre la sartén antes de agregar aceite. Una gota de agua debe sisear y evaporarse al contacto cuando está lista.</p>
+          <span class="tip-category">Técnicas</span>
+        </div>
+
+        <div class="tip-card">
+          <span class="tip-icon">🧄</span>
+          <h3>Ajo sin amargura</h3>
+          <p>Retirá el brote verde del centro del ajo para evitar sabores amargos. Frotá tus manos con acero inoxidable para quitar el olor persistente.</p>
+          <span class="tip-category">Ingredientes</span>
+        </div>
+
+        <div class="tip-card">
+          <span class="tip-icon">🍋</span>
+          <h3>Más jugo de limón</h3>
+          <p>Rodá el limón presionando sobre la mesada antes de cortarlo. También podés calentarlo 10 segundos en el microondas para obtener hasta 40% más jugo.</p>
+          <span class="tip-category">Cítricos</span>
+        </div>
+
       </div>
     </div>
   </div>
@@ -849,6 +920,38 @@ document.getElementById('add-recipe-form').addEventListener('submit', async func
   const usuarioJSON = localStorage.getItem('usuario');
   const usuario = JSON.parse(usuarioJSON || '{"email": "invitado@ejemplo.com", "nombre": "Invitado"}');
 
+  const imageInput = document.getElementById('recipe-image');
+  let imagenUrl = '';
+
+  // PASO 1: Subir imagen si hay
+  if (imageInput.files.length > 0) {
+    const file = imageInput.files[0];
+    const ext = file.name.split('.').pop().toLowerCase();
+
+    try {
+      // Obtener URL prefirmada desde el backend
+      const res = await fetch(`${apiBaseUrl}/generar_presigned_url?ext=${ext}`);
+      const data = await res.json();
+
+      // Subir la imagen directamente a S3 usando la URL prefirmada
+      await fetch(data.upload_url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': file.type
+        },
+        body: file
+      });
+
+      // Guardar URL pública para mandarla a la Lambda
+      imagenUrl = data.image_url;
+    } catch (error) {
+      alert('Error al subir la imagen');
+      console.error(error);
+      return;
+    }
+  }
+
+  // PASO 2: Enviar receta con URL de imagen a Lambda
   const formData = new FormData();
   formData.append('nombre', document.getElementById('recipe-name').value);
   formData.append('tiempo', document.getElementById('recipe-time').value);
@@ -856,16 +959,12 @@ document.getElementById('add-recipe-form').addEventListener('submit', async func
   formData.append('ingredientes', ingredientes.join(', '));
   formData.append('instrucciones', document.getElementById('recipe-instructions').value);
   formData.append('usuario_email', usuario.email);
-
-  const imageInput = document.getElementById('recipe-image');
-  if (imageInput.files.length > 0) {
-    formData.append('imagen', imageInput.files[0]);
-  }
+  formData.append('imagen_url', imagenUrl);  // 🚨 nueva línea
 
   try {
     const response = await fetch(`${apiBaseUrl}/guardar_receta`, {
       method: 'POST',
-      body: formData  // El navegador maneja los headers automáticamente
+      body: formData
     });
 
     const result = await response.json();
@@ -883,6 +982,7 @@ document.getElementById('add-recipe-form').addEventListener('submit', async func
     console.error(error);
   }
 });
+
 
 
   // Búsqueda de recetas (ACTUALIZADA)
