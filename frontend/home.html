@@ -189,9 +189,7 @@
 
     .btn-add i {
       margin-right: 8px;
-    }
-
-    .btn-add:hover {
+    }    .btn-add:hover {
       background-color: #429644;
     }
 
@@ -285,6 +283,94 @@
       font-size: 2rem;
       margin-bottom: 1rem;
       display: block;
+    }
+
+    .destacadas {
+      margin-top: 2rem;
+    }
+
+    .destacadas h2 {
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+      padding-bottom: 8px;
+    }
+
+    .destacadas h2::after {
+      content: '';
+      position: absolute;
+      width: 60%;
+      height: 3px;
+      background-color: var(--primary-color);
+      bottom: 0;
+      left: 0;
+    }
+
+    .recetas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .receta {
+      background-color: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+
+    .receta:hover {
+      transform: translateY(-5px);
+    }
+
+    .receta-img {
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .receta-info {
+      padding: 1.5rem;
+    }
+
+    .receta h3 {
+      margin-bottom: 10px;
+      color: var(--primary-dark);
+    }
+
+    .receta p {
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .receta-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .tiempo {
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    .btn {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #429644;
     }
 
     /* Modal para agregar receta */
@@ -402,73 +488,6 @@
       display: none;
     }
 
-    .recetas-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 25px;
-    }
-
-    .receta {
-      background-color: var(--white);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-      transition: transform 0.3s ease;
-      position: relative;
-    }
-
-    .receta:hover {
-      transform: translateY(-5px);
-    }
-
-    .receta-img {
-      height: 180px;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .receta-info {
-      padding: 1.5rem;
-    }
-
-    .receta h3 {
-      margin-bottom: 10px;
-      color: var(--primary-dark);
-    }
-
-    .receta p {
-      color: #666;
-      margin-bottom: 15px;
-    }
-
-    .receta-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 15px;
-      border-top: 1px solid #eee;
-    }
-
-    .tiempo {
-      font-size: 0.9rem;
-      color: #777;
-    }
-
-    .btn {
-      background-color: var(--accent-color);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: background-color 0.3s;
-    }
-
-    .btn:hover {
-      background-color: #429644;
-    }
-
     /* Estilos para las etiquetas de ingredientes */
     .search-ingredients-list {
       display: flex;
@@ -504,9 +523,7 @@
       text-align: center;
       padding: 2rem;
       margin-top: 3rem;
-    }
-
-    @media (max-width: 768px) {
+    }    @media (max-width: 768px) {
       .tips-grid {
         grid-template-columns: 1fr;
       }
@@ -531,7 +548,7 @@
       }
     }
 
-    /* Favorite Button CSS */
+    /* Favorite Button CSS - To be added */
     .favorite-btn {
         position: absolute;
         top: 1rem;
@@ -563,13 +580,14 @@
     .favorite-btn.active i {
         color: #ff4757;
     }
+    /* End of Favorite Button CSS */
   </style>
 </head>
 <body>
 
   <header>
     <div class="header-container">
-      <h1>Recetas en Casa</h1>
+      <h1>Recetify</h1>
       <nav>
         <a href="misRecetas.html">Mis Recetas</a>
         <a href="favoritos.html">Favoritos</a>
@@ -635,9 +653,7 @@
     <!-- Botón para agregar receta -->
     <button class="btn-add" id="btn-add-recipe">
       <i class="fas fa-plus"></i> Agregar nueva receta
-    </button>
-
-    <!-- Resultados de búsqueda -->
+    </button>    <!-- Resultados de búsqueda -->
     <div class="search-results" id="search-results">
       <h2>Resultados de búsqueda</h2>
       <div class="recetas-grid" id="search-results-grid">
@@ -690,7 +706,6 @@
           <p>Rodá el limón presionando sobre la mesada antes de cortarlo. También podés calentarlo 10 segundos en el microondas para obtener hasta 40% más jugo.</p>
           <span class="tip-category">Cítricos</span>
         </div>
-
       </div>
     </div>
   </div>
@@ -751,7 +766,7 @@
   </div>
 
   <footer>
-    <p>© 2025 Recetas en Casa - Todos los derechos reservados</p>
+    <p>© 2025 Recetify - Todos los derechos reservados</p>
   </footer>
 
   <script src="config.js"></script>
@@ -920,38 +935,6 @@ document.getElementById('add-recipe-form').addEventListener('submit', async func
   const usuarioJSON = localStorage.getItem('usuario');
   const usuario = JSON.parse(usuarioJSON || '{"email": "invitado@ejemplo.com", "nombre": "Invitado"}');
 
-  const imageInput = document.getElementById('recipe-image');
-  let imagenUrl = '';
-
-  // PASO 1: Subir imagen si hay
-  if (imageInput.files.length > 0) {
-    const file = imageInput.files[0];
-    const ext = file.name.split('.').pop().toLowerCase();
-
-    try {
-      // Obtener URL prefirmada desde el backend
-      const res = await fetch(`${apiBaseUrl}/generar_presigned_url?ext=${ext}`);
-      const data = await res.json();
-
-      // Subir la imagen directamente a S3 usando la URL prefirmada
-      await fetch(data.upload_url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': file.type
-        },
-        body: file
-      });
-
-      // Guardar URL pública para mandarla a la Lambda
-      imagenUrl = data.image_url;
-    } catch (error) {
-      alert('Error al subir la imagen');
-      console.error(error);
-      return;
-    }
-  }
-
-  // PASO 2: Enviar receta con URL de imagen a Lambda
   const formData = new FormData();
   formData.append('nombre', document.getElementById('recipe-name').value);
   formData.append('tiempo', document.getElementById('recipe-time').value);
@@ -959,12 +942,15 @@ document.getElementById('add-recipe-form').addEventListener('submit', async func
   formData.append('ingredientes', ingredientes.join(', '));
   formData.append('instrucciones', document.getElementById('recipe-instructions').value);
   formData.append('usuario_email', usuario.email);
-  formData.append('imagen_url', imagenUrl);  // 🚨 nueva línea
 
+  const imageInput = document.getElementById('recipe-image');
+  if (imageInput.files.length > 0) {
+    formData.append('imagen', imageInput.files[0]);
+  }
   try {
     const response = await fetch(`${apiBaseUrl}/guardar_receta`, {
       method: 'POST',
-      body: formData
+      body: formData  // El navegador maneja los headers automáticamente
     });
 
     const result = await response.json();
@@ -984,7 +970,6 @@ document.getElementById('add-recipe-form').addEventListener('submit', async func
 });
 
 
-
   // Búsqueda de recetas (ACTUALIZADA)
   document.getElementById('btn-search').addEventListener('click', async function() {
     const searchType = document.querySelector('input[name="search-type"]:checked').value;
@@ -995,8 +980,7 @@ document.getElementById('add-recipe-form').addEventListener('submit', async func
       if (!searchInput) {
         alert('Por favor, ingresa un término de búsqueda');
         return;
-      }
-      searchParams = `nombre=${encodeURIComponent(searchInput)}`;
+      }      searchParams = `nombre=${encodeURIComponent(searchInput)}`;
     } 
     else if (searchType === 'categoria') {
       const categoria = document.getElementById('categoria-select').value;
@@ -1094,9 +1078,7 @@ document.getElementById('add-recipe-form').addEventListener('submit', async func
       const button = event.currentTarget;
       const icon = button.querySelector('i');
       const isFavorite = icon.classList.contains('fas');
-      const endpoint = isFavorite ? 'removeFavorite' : 'addFavorite';
-
-      try {
+      const endpoint = isFavorite ? 'removeFavorite' : 'addFavorite';      try {
         const response = await fetch(`${apiBaseUrl}/${endpoint}`, {
           method: 'POST',
           headers: {
@@ -1128,9 +1110,7 @@ document.getElementById('add-recipe-form').addEventListener('submit', async func
     // Cargar estado inicial de favoritos
     async function loadFavoriteStates() {
       const userEmail = getUserEmail();
-      if (!userEmail) return;
-
-      try {
+      if (!userEmail) return;      try {
         const response = await fetch(`${apiBaseUrl}/getFavorites`, {
           method: 'POST',
           headers: {
