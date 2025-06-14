@@ -206,7 +206,7 @@ module "api_gateway" {
   lambda_arns = {
     guardarReceta    = module.lambdas.lambda_arns["guardarReceta"]
     obtenerReceta    = module.lambdas.lambda_arns["obtenerReceta"]
-    busquedaRecetas  = module.lambdas.lambda_arns["busquedaRecetas"]  // ✅ Fixed typo
+    busquedaRecetas  = module.lambdas.lambda_arns["busquedaRecetas"]  
     obtenerRecetasUsuario = module.lambdas.lambda_arns["obtenerRecetasUsuario"]
     registroCognito = module.lambdas.lambda_arns["registroCognito"]
     inicioSesionCognito = module.lambdas.lambda_arns["inicioSesionCognito"]

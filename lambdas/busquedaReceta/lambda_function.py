@@ -34,11 +34,14 @@ def lambda_handler(event, context):
         }
         
         if nombre:
-            scan_kwargs['FilterExpression'] += ' AND contains(#n, :nombre)'
+            # Convertir a minúsculas para búsqueda insensible a mayúsculas
+            nombre_lower = nombre.lower()
+            scan_kwargs['FilterExpression'] += ' AND contains(lower(#n), :nombre)'
             scan_kwargs['ExpressionAttributeNames']['#n'] = 'nombre'
-            scan_kwargs.setdefault('ExpressionAttributeValues', {})[':nombre'] = nombre
+            scan_kwargs.setdefault('ExpressionAttributeValues', {})[':nombre'] = nombre_lower
         
         if categoria:
+            # La categoría se mantiene exacta (case-sensitive)
             scan_kwargs['FilterExpression'] += ' AND #c = :categoria'
             scan_kwargs['ExpressionAttributeNames']['#c'] = 'categoria'
             scan_kwargs.setdefault('ExpressionAttributeValues', {})[':categoria'] = categoria
@@ -46,10 +49,12 @@ def lambda_handler(event, context):
         if ingredientes:
             ingredientes_list = ingredientes.split(',')
             for idx, ing in enumerate(ingredientes_list):
+                # Convertir ingredientes a minúsculas para búsqueda insensible a mayúsculas
+                ing_lower = ing.strip().lower()
                 key = f':ing{idx}'
-                scan_kwargs['FilterExpression'] += f' AND contains(#i, {key})'
+                scan_kwargs['FilterExpression'] += f' AND contains(lower(#i), {key})'
                 scan_kwargs['ExpressionAttributeNames']['#i'] = 'ingredientes'
-                scan_kwargs.setdefault('ExpressionAttributeValues', {})[key] = ing.strip()
+                scan_kwargs.setdefault('ExpressionAttributeValues', {})[key] = ing_lower
         
         response = table.scan(**scan_kwargs)
         items = response.get('Items', [])
