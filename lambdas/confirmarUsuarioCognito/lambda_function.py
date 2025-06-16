@@ -3,6 +3,10 @@ import json
 import os
 
 client = boto3.client('cognito-idp')
+sns = boto3.client('sns')
+
+def generar_nombre_topic(email):
+    return email.replace("@", "_at_").replace(".", "_")
 
 def lambda_handler(event, context):
     headers = {
@@ -31,6 +35,12 @@ def lambda_handler(event, context):
             Username=email,
             ConfirmationCode=code
         )
+
+        # Crear topic SNS para este usuario y suscribirse
+        topic_name = generar_nombre_topic(email)
+        topic_response = sns.create_topic(Name=topic_name)
+        topic_arn = topic_response['TopicArn']
+        sns.subscribe(TopicArn=topic_arn, Protocol='email', Endpoint=email)
 
         return {
             'statusCode': 200,
