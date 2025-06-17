@@ -5,6 +5,8 @@ import base64
 import cgi
 import io
 import os
+import unicodedata
+import re
 
 s3 = boto3.client('s3')
 dynamodb = boto3.resource('dynamodb')
@@ -12,6 +14,22 @@ table = dynamodb.Table('TablaRecetas')
 
 # Nombre del bucket de imágenes desde variable de entorno
 BUCKET_IMAGENES = os.environ['BUCKET_IMAGENES']
+
+def normalizar_texto(texto):
+
+    if not texto:
+        return ""
+    
+    texto = texto.lower()
+    
+    texto = unicodedata.normalize('NFD', texto)
+    texto = ''.join(char for char in texto if unicodedata.category(char) != 'Mn')
+    
+    texto = re.sub(r"[''`´]", "", texto)
+    
+    texto = re.sub(r'\s+', ' ', texto).strip()
+    
+    return texto
 
 def lambda_handler(event, context):
     # Cabeceras CORS para permitir solicitudes desde el frontend
@@ -85,17 +103,19 @@ def lambda_handler(event, context):
             # Construcción de URL pública
             imagen_url = f"https://{BUCKET_IMAGENES}.s3.amazonaws.com/{s3_key}"
 
-        # Crear item para DynamoDB
         item = {
-        'USER': usuario_email,
-        'RECETA': id_receta,
-        'TIPO': 'ORIGINAL',  # <= este es el campo necesario
-        'nombre': nombre,
-        'ingredientes': ingredientes,
-        'instrucciones': instrucciones,
-        'categoria': categoria,
-        'tiempo': tiempo,
-        'notificado': False  # opcional pero útil si querés setearlo ya
+            'USER': usuario_email,
+            'RECETA': id_receta,
+            'TIPO': 'ORIGINAL',
+            'nombre': nombre,
+            'ingredientes': ingredientes,
+            'instrucciones': instrucciones,
+            'categoria': categoria,
+            'tiempo': tiempo,
+            'notificado': False,
+            'nombre_normalizado': normalizar_texto(nombre),
+            'ingredientes_normalizado': normalizar_texto(ingredientes),
+            'categoria_normalizada': normalizar_texto(categoria)
         }
 
         if imagen_url:
