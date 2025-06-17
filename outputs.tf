@@ -17,3 +17,7 @@ output "dynamodb_table_arn" {
 output "lambda_arns" {
   value = module.lambdas.lambda_arns
 }
+
+output "queue_url" {
+  value = module.sqs_favoritos.queue_url   # id = QueueURL
+}

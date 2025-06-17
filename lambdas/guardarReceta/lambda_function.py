@@ -87,13 +87,15 @@ def lambda_handler(event, context):
 
         # Crear item para DynamoDB
         item = {
-            'USER': usuario_email,
-            'RECETA': id_receta,
-            'nombre': nombre,
-            'ingredientes': ingredientes,
-            'instrucciones': instrucciones,
-            'categoria': categoria,
-            'tiempo': tiempo
+        'USER': usuario_email,
+        'RECETA': id_receta,
+        'TIPO': 'ORIGINAL',  # <= este es el campo necesario
+        'nombre': nombre,
+        'ingredientes': ingredientes,
+        'instrucciones': instrucciones,
+        'categoria': categoria,
+        'tiempo': tiempo,
+        'notificado': False  # opcional pero útil si querés setearlo ya
         }
 
         if imagen_url:

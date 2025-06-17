@@ -4,9 +4,11 @@ import os
 
 client = boto3.client('cognito-idp')
 sns = boto3.client('sns')
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table(os.environ.get('DYNAMODB_TABLE', 'TablaRecetas'))
 
 def generar_nombre_topic(email):
-    return email.replace("@", "_at_").replace(".", "_")
+    return email.replace("@", "at").replace(".", "_")
 
 def lambda_handler(event, context):
     headers = {
@@ -30,22 +32,39 @@ def lambda_handler(event, context):
         }
 
     try:
+        # Confirmar usuario con Cognito
         client.confirm_sign_up(
             ClientId=os.environ['COGNITO_CLIENT_ID'],
             Username=email,
             ConfirmationCode=code
         )
 
-        # Crear topic SNS para este usuario y suscribirse
+        # Crear topic SNS
         topic_name = generar_nombre_topic(email)
         topic_response = sns.create_topic(Name=topic_name)
         topic_arn = topic_response['TopicArn']
-        sns.subscribe(TopicArn=topic_arn, Protocol='email', Endpoint=email)
+
+        # Suscribir usuario al topic
+        sns.subscribe(
+            TopicArn=topic_arn,
+            Protocol='email',
+            Endpoint=email
+        )
+
+        # Guardar ARN del topic en DynamoDB
+        table.put_item(
+            Item={
+                'USER': email,
+                'RECETA': 'SNS_TOPIC',
+                'topic_arn': topic_arn
+            }
+        )
+
 
         return {
             'statusCode': 200,
             'headers': headers,
-            'body': json.dumps({'message': 'Usuario verificado exitosamente'})
+            'body': json.dumps({'message': 'Usuario verificado, por favor inicie sesión'})
         }
 
     except Exception as e:
