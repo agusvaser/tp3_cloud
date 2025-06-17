@@ -265,6 +265,16 @@
         if (respuesta.ok) {
           mensajeEl.className = "mensaje success";
           mensajeEl.textContent = "Registro exitoso. Verificá tu correo.";
+          
+          // Guardar temporalmente los datos del usuario para el auto-login
+          sessionStorage.setItem("tempUserData", JSON.stringify({
+            email: datos.email,
+            password: datos.password
+          }));
+          
+          // Pre-llenar el email en el formulario de verificación
+          document.querySelector('#form-verificar input[name="email"]').value = datos.email;
+          
           // Mostrar y cambiar a pestaña de verificación
           document.getElementById("tab-verificar").style.display = "inline-block";
           switchTab('verificar');
@@ -326,9 +336,13 @@
       mensajeEl.className = "mensaje";
       mensajeEl.textContent = "Procesando...";
 
+      // Obtener datos temporales del registro
+      const tempUserData = JSON.parse(sessionStorage.getItem("tempUserData") || "{}");
+
       const datos = {
         email: this.email.value,
-        code: this.code.value
+        code: this.code.value,
+        password: tempUserData.password // Incluir la contraseña para el auto-login
       };
 
       try {
@@ -342,7 +356,32 @@
 
         if (respuesta.ok) {
           mensajeEl.className = "mensaje success";
-          mensajeEl.textContent = resultado.message || "Cuenta verificada. Ya podés iniciar sesión.";
+          
+          // Limpiar datos temporales
+          sessionStorage.removeItem("tempUserData");
+          
+          if (resultado.auto_login && resultado.id_token) {
+            // Auto-login exitoso
+            mensajeEl.textContent = "¡Cuenta verificada e iniciando sesión automáticamente!";
+            
+            // Guardar datos de sesión
+            localStorage.setItem("usuario", JSON.stringify({
+              email: datos.email,
+              token: resultado.id_token
+            }));
+            
+            // Redirigir al home después de un breve delay
+            setTimeout(() => {
+              window.location.href = "home.html";
+            }, 2000);
+          } else {
+            // Auto-login falló, mostrar mensaje normal
+            mensajeEl.textContent = resultado.message || "Cuenta verificada. Ya podés iniciar sesión.";
+            // Cambiar a pestaña de login
+            setTimeout(() => {
+              switchTab('login');
+            }, 2000);
+          }
         } else {
           mensajeEl.className = "mensaje error";
           mensajeEl.textContent = resultado.error || "Error al confirmar cuenta.";
@@ -350,6 +389,8 @@
       } catch (error) {
         mensajeEl.className = "mensaje error";
         mensajeEl.textContent = "Error al conectar con el servidor.";
+        // Limpiar datos temporales en caso de error
+        sessionStorage.removeItem("tempUserData");
       }
     });
   </script>

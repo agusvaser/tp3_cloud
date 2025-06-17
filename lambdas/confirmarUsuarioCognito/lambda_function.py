@@ -23,6 +23,7 @@ def lambda_handler(event, context):
     body = json.loads(event.get('body', '{}'))
     email = body.get('email')
     code = body.get('code')
+    password = body.get('password')  # Agregamos el password para el auto-login
 
     if not email or not code:
         return {
@@ -60,11 +61,42 @@ def lambda_handler(event, context):
             }
         )
 
+        # AUTO-LOGIN: Iniciar sesión automáticamente después de la confirmación
+        auto_login_result = None
+        if password:
+            try:
+                auth_response = client.initiate_auth(
+                    ClientId=os.environ['COGNITO_CLIENT_ID'],
+                    AuthFlow='USER_PASSWORD_AUTH',
+                    AuthParameters={
+                        'USERNAME': email,
+                        'PASSWORD': password
+                    }
+                )
+                auto_login_result = auth_response['AuthenticationResult']
+            except Exception as login_error:
+                # Si falla el auto-login, no devolvemos error, solo continuamos sin tokens
+                print(f"Error en auto-login: {login_error}")
+
+        response_body = {
+            'message': 'Usuario verificado exitosamente'
+        }
+
+        # Si el auto-login fue exitoso, incluir los tokens en la respuesta
+        if auto_login_result:
+            response_body.update({
+                'auto_login': True,
+                'id_token': auto_login_result.get('IdToken'),
+                'access_token': auto_login_result.get('AccessToken'),
+                'refresh_token': auto_login_result.get('RefreshToken')
+            })
+        else:
+            response_body['auto_login'] = False
 
         return {
             'statusCode': 200,
             'headers': headers,
-            'body': json.dumps({'message': 'Usuario verificado, por favor inicie sesión'})
+            'body': json.dumps(response_body)
         }
 
     except Exception as e:
