@@ -70,6 +70,18 @@ resource "aws_vpc_endpoint" "dynamodb" {
   }
 }
 
+resource "aws_vpc_endpoint" "sqs" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.${var.region}.sqs"
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = var.private_subnets
+  security_group_ids = [
+    aws_security_group.lambda_sg.id
+  ]
+
+  private_dns_enabled = true
+}
+
 # Security Group para las Lambdas
 resource "aws_security_group" "lambda_sg" {
   name        = "${var.name_prefix}-lambda-sg"
@@ -81,6 +93,13 @@ resource "aws_security_group" "lambda_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.main.cidr_block]
   }
 
   tags = {

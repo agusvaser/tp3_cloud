@@ -22,3 +22,7 @@ output "dynamodb_vpc_endpoint_id" {
   description = "DynamoDB VPC Endpoint ID"
   value       = aws_vpc_endpoint.dynamodb.id
 }
+
+output "sqs_endpoint_id" {
+  value = aws_vpc_endpoint.sqs.id
+}
