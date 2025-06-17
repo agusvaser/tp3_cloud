@@ -74,7 +74,7 @@ resource "aws_vpc_endpoint" "sqs" {
   vpc_id            = aws_vpc.main.id
   service_name      = "com.amazonaws.${var.region}.sqs"
   vpc_endpoint_type = "Interface"
-  subnet_ids        = var.private_subnets
+  subnet_ids = aws_subnet.private[*].id  
   security_group_ids = [
     aws_security_group.lambda_sg.id
   ]
@@ -95,11 +95,11 @@ resource "aws_security_group" "lambda_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  egress {
+  ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [aws_vpc.main.cidr_block]
+    self        = true
   }
 
   tags = {
