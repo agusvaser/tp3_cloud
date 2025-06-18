@@ -52,13 +52,21 @@ def lambda_handler(event, context):
         items = response.get('Items', [])
         print(f"Recetas encontradas: {len(items)}")
 
-        # Filtrar solo las recetas (excluir el perfil del usuario)
+
         recetas_usuario = []
         for item in items:
-            # Solo incluir items que tengan RECETA, no sean el perfil y no sean un marcador de favorito
             recipe_id = item.get('RECETA')
-            if recipe_id and recipe_id != 'PROFILE' and not recipe_id.startswith('FAVORITE#'):
+            tipo = item.get('TIPO')
+            
+            if (recipe_id and 
+                recipe_id != 'PROFILE' and 
+                recipe_id != 'SNS_TOPIC' and 
+                not recipe_id.startswith('FAVORITE#') and
+                tipo == 'ORIGINAL'):
                 recetas_usuario.append(item)
+                print(f"  ✓ Incluyendo receta: {item.get('nombre', 'Sin nombre')} (ID: {recipe_id})")
+            else:
+                print(f"  ✗ Excluyendo entrada: RECETA={recipe_id}, TIPO={tipo}")
 
         print(f"Recetas del usuario (sin perfil y sin favoritos duplicados): {len(recetas_usuario)}")
 
